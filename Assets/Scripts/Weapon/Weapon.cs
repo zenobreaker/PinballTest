@@ -1,0 +1,391 @@
+﻿using System;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
+
+[Serializable]
+public class HitData
+{
+    public DamageType DamageType;
+    public float Distance;
+    public float HeightValue;
+    public int StopFrame;
+    public int HitImpactIndex;
+    public string HitSoundName;
+    public GameObject HitParticle;
+    public Vector3 HitParticlePositionOffset = Vector3.zero;
+    public Vector3 HitParticleScaleOffset = Vector3.one;
+
+    public void PlayHitSound()
+    {
+        //SoundManager.Instance.PlaySFX(HitSoundName);
+    }
+
+    public bool IsDOTEffect()
+    {
+        return DamageType == DamageType.DOT_BLEED || DamageType == DamageType.DOT_BURN ||
+            DamageType == DamageType.DOT_HATERD || DamageType == DamageType.DOT_POISON;
+    }
+
+    public HitData Clone()
+    {
+        HitData clone = new HitData();
+        clone.DamageType = DamageType;
+        clone.Distance = Distance;
+        clone.HeightValue = HeightValue;
+        clone.StopFrame = StopFrame;
+        clone.HitImpactIndex = HitImpactIndex;
+        clone.HitSoundName = HitSoundName;
+        clone.HitParticle = HitParticle;
+        clone.HitParticlePositionOffset = HitParticlePositionOffset;
+        clone.HitParticleScaleOffset = HitParticleScaleOffset;
+        return clone;
+    }
+}
+
+
+[Serializable]
+public class DamageData
+{
+    [Header("Power Settings")]
+    public DamageType damageType;
+
+    [Tooltip("스킬 고유의 기본 데미지 (깡뎀)")]
+    public float baseDamage = 10.0f;
+
+    [Tooltip("캐릭터 스탯 반영 비율 (1.0 = 공격력의 100%)")]
+    public float statCoefficient = 0.0f;
+
+    [Header("Launch & Down Settings")]
+    public bool bDownable = false;
+    public bool bLauncher = false;
+
+    [Header("Sound")]
+    public string SoundName;
+
+    [Header("Camera Shake")]
+    public Vector3 impulseDirection;
+
+    //public SO_CameraShakePreset csp;
+
+    [Header("Hit")]
+    public HitData hitData;
+
+    public float ignoreDefenseRate = 0.0f;
+
+    //public DamageEvent GetMyDamageEvent(GameObject attacker,
+    //    bool bFirstHit = false, bool bExtraCrit = false,
+    //    float multiplier = 1.0f)
+    //{
+    //    return GetMyDamageEvent(attacker.GetComponent<StatusComponent>(), bFirstHit,
+    //        bExtraCrit, multiplier);
+    //}
+
+    public DamageEvent GetMyDamageEvent(
+        StatusComponent attackerStatus,
+        bool isFirstHit = false,
+        bool extraCrit = false,
+        float multiplier = 1f)
+    {
+        return DamageCalculator.GetMyDamageEvent(attackerStatus, this,isFirstHit,extraCrit, multiplier);
+    }
+    public void PlayHitSound()
+    {
+        if (hitData == null) return;
+
+        hitData.PlayHitSound();
+    }
+
+    public DamageData Clone()
+    {
+        DamageData clone = new DamageData();
+        clone.damageType = this.damageType;
+        clone.baseDamage = this.baseDamage;
+        clone.statCoefficient = this.statCoefficient;
+        clone.bDownable = bDownable;
+        clone.bLauncher = bLauncher;
+        clone.SoundName = SoundName;
+        clone.impulseDirection = impulseDirection;
+        //clone.csp = csp;
+        clone.hitData = this.hitData.Clone();
+        clone.ignoreDefenseRate = this.ignoreDefenseRate;
+        return clone;
+    }
+}
+
+[Serializable]
+public class DamageSequence
+{
+    public float hitDelay = -1.0f;
+    public List<DamageData> damageDatas = new List<DamageData>();
+}
+
+
+[Serializable]
+public class ActionData
+{
+    [SerializeField]
+    private string subStateName;
+    public string SubStateName { get => subStateName; }
+
+    [SerializeField]
+    private string stateName;
+    private string state;
+    public string StateName { get => state; }
+
+    [SerializeField]
+    private string layerName;
+    public string LayerName { get => layerName; }
+
+    [SerializeField] private float actionSpeed = 1.0f;
+    public float ActionSpeed { get => actionSpeed; set => actionSpeed = value; }
+
+
+    // StateName을 해시 값으로 저장
+    private int actionSpeedHash = -1;
+    public int ActionSpeedHash
+    {
+        get
+        {
+            if (actionSpeedHash == -1)
+                actionSpeedHash = Animator.StringToHash("ActionSpeed");
+            return actionSpeedHash;
+        }
+    }
+
+    [SerializeField]
+    private string weaponActionName;
+    public string WeaponActionName { get => weaponActionName; }
+
+    [Header("Sound")]
+    public string SoundName;
+
+    [Header("Camera Shake")]
+    public Vector3 impulseDirection;
+
+    //public SO_CameraShakePreset csp;
+
+    [Header("ETC")]
+    public bool bCanMove;
+    //public bool bFixedCamera;
+
+    public virtual ActionData Clone()
+    {
+        ActionData actionData = new ActionData();
+        Initialize();
+        actionData = (ActionData)MemberwiseClone();
+       // actionData.csp = csp;
+        return actionData;
+    }
+
+    public void Initialize()
+    {
+        if (string.IsNullOrEmpty(SubStateName) == false)
+        {
+            state = stateName + '.' + SubStateName;
+            return;
+        }
+        state = stateName;
+    }
+
+    public void Play_Sound()
+    {
+       // SoundManager.Instance.PlaySFX(SoundName);
+    }
+
+    public void Play_CameraShake()
+    {
+        //if (MovableCameraShaker.Instance != null && csp != null)
+        //    MovableCameraShaker.Instance.Play_Impulse(csp.settings);
+    }
+}
+
+//public class MissingHPDamageModifier
+//{
+//    // 비례율 (예: 0.05)
+//    public float Ratio { get; set; }
+
+//    // 최대 피해 상한선 (0 또는 음수면 상한 없음)
+//    public float DamageCap { get; set; }
+
+//    // 이 모디파이어의 출처 (디버깅용: "Passive_Woe", "Item_Blade")
+//    public string SourceId { get; set; }
+//}
+
+public class DamageEvent
+{
+    public float BaseDamage;
+    public bool isCrit;
+    public bool isFisrtHit;
+
+    public HitData hitData;
+
+    //TODO : 잃은 체력 비례 데미지의 대한 상한 조건이 서로 상이할 경우 사용
+    //public List<MissingHPDamageModifier> MissingHPModifiers { get; } = new List<MissingHPDamageModifier>();
+    public float MissingHPRatio; // 잃은 체력 비례 데미지
+    public float IgnoreDefenseRate;  // 방어력 무시 데미지
+    public float MaxHPRatio; // 최대 체력 비례 데미지 
+    public float DamageAmp;
+
+    public int AttackInstanceID { get; set; }
+
+    public DamageEvent(float value, bool isCrit = false, bool isFisrtHit = false, HitData hitData = null)
+    {
+        this.BaseDamage = value;
+        this.isCrit = isCrit;
+        this.isFisrtHit = isFisrtHit;
+        MissingHPRatio = 0f;
+        IgnoreDefenseRate = 0f;
+        MaxHPRatio = 0f;
+        DamageAmp = 0f;
+
+        if (hitData != null)
+            this.hitData = hitData;
+        else
+            this.hitData = new();
+    }
+
+    public bool IsDOTEffect()
+    {
+        if (hitData == null) return false;
+        return hitData.IsDOTEffect();
+    }
+}
+
+
+
+public class Weapon : MonoBehaviour
+{
+    public bool bDebug = false;
+
+    [Header("Weapon Settings")]
+    [SerializeField] protected WeaponType type;
+    public WeaponType Type { get => type; }
+
+    //[SerializeField] protected SO_Action so_Action;
+   // public SO_Action GetActionData { get => so_Action; }
+    //[SerializeField] protected SO_Damage so_Damage;
+   // public SO_Damage GetDamageData { get => so_Damage; }
+
+    protected List<ActionData> actionDatas;
+    protected List<DamageData> damageDatas;
+
+    private bool bEquipped;
+    public bool Equipped { get => bEquipped; }
+    protected int currentComboCount = 0;
+
+    private bool bDirtyMove = false;
+
+    protected GameObject rootObject;    // 무기를 가진 대상
+    protected Character ownerCharacter;
+    protected WeaponController weaponController;
+
+    protected StateComponent state;
+    protected StatusComponent status;
+   // protected MovementComponent moving;
+
+    public event Action<GameObject> OnLastAttackExecuted;
+
+    protected virtual void Awake()
+    {
+        rootObject = transform.root.gameObject;
+        Debug.Assert(rootObject != null);
+
+        state = rootObject.GetComponent<StateComponent>();
+        status = rootObject.GetComponent<StatusComponent>();
+        ownerCharacter = rootObject.GetComponent<Character>();
+       // moving = rootObject.GetComponent<MovementComponent>();
+
+        //if (so_Action != null)
+        //    actionDatas = so_Action.actionDatas;
+        //if (so_Damage != null)
+        //    damageDatas = so_Damage.damageDatas;
+    }
+
+    protected virtual void Start()
+    {
+        foreach (var actionData in actionDatas)
+            actionData.Initialize();
+    }
+
+    protected virtual void InvokeLastAttackEvent()
+    {
+        OnLastAttackExecuted?.Invoke(rootObject);
+    }
+
+    public void Equip()
+    {
+        Debug.Log($"Equip : {type.ToString()}");
+
+        //TODO : 장착 애니메이션이 없으므로 여기서 이 함수를 콜함
+
+        if (rootObject.TryGetComponent(out IWeaponUser user))
+        {
+            weaponController = user.GetWeaponController();
+        }
+
+        Begin_Equip();
+    }
+
+    public virtual void Begin_Equip() { }
+
+    public virtual void End_Equip()
+    {
+        bEquipped = true;
+    }
+
+    public virtual void Unequip()
+    {
+        bEquipped = false;
+    }
+
+    public virtual void DoAction(int index = 0)
+    {
+        if (state.IdleMode == false)
+            return;
+
+        state.SetActionMode();
+        CheckStop(index);
+    }
+
+    public virtual void Begin_DoAction() { }
+
+    public virtual void End_DoAction()
+    {
+        state.SetIdleMode();
+
+        if (bDirtyMove)
+        {
+            bDirtyMove = false;
+            Move();
+        }
+    }
+
+    public virtual void Begin_JudgeAttack(AnimationEvent e) { }
+    public virtual void End_JudgeAttack(AnimationEvent e) { }
+
+    public virtual void Play_PlaySound() { }
+
+    public virtual void Play_CameraShake() { }
+
+    ////////////////////////////////////////////////////////////////////////////////////
+
+    protected void Move()
+    {
+        //moving?.Move();
+    }
+
+    protected void Stop()
+    {
+        //moving?.Stop();
+    }
+
+    protected void CheckStop(int index)
+    {
+        //if (so_Action != null && so_Action.GetCanMove(index) == false)
+        //{
+        //    Stop();
+        //    bDirtyMove = true;
+        //}
+    }
+}
