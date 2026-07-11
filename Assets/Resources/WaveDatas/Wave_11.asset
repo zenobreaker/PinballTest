@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Wave_11
+  m_EditorClassIdentifier: Assembly-CSharp::SO_WaveData
+  waveIndex: 11
+  spawns:
+  - monsterId: 1001
+    spawnPointIndex: 9
+  - monsterId: 1001
+    spawnPointIndex: 22
+  - monsterId: 1001
+    spawnPointIndex: 35
+  - monsterId: 1001
+    spawnPointIndex: 48
+  - monsterId: 1001
+    spawnPointIndex: 61
+  - monsterId: 1001
+    spawnPointIndex: 74
+  - monsterId: 1001
+    spawnPointIndex: 87
+  - monsterId: 1001
+    spawnPointIndex: 113
+  - monsterId: 1001
+    spawnPointIndex: 100
