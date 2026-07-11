@@ -89,9 +89,6 @@ public sealed class StageManager : MonoBehaviour
             // 맵 로드 
             RoomData roomData = roomManager.LoadRoom(currentStage);
 
-            // 플레이어 스폰 대기
-            await spawnManager.SpawnCharacterAsync(1, roomData.MainSpawnPoints, token);
-
             bool isPlayerDead = false;
 
             // 웨이브 루프 시작!

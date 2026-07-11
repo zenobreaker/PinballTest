@@ -22,17 +22,6 @@ public sealed class RoomManager : MonoBehaviour
         if (curStage == null)
             return roomData;
 
-        // 1. StageInfo에 저장된 테마 씌우기 
-        biomeManager.ChangeBiome(curStage.biome);
-
-        // 2. StageInfo에 저장된 인덱스의 맵 꺼내기 
-        //SO_Biome biome = biomeManager.GetBiomeData(curStage.biome);
-        //GameObject prefab = biome.possibleRoomPrefabs[curStage.mapIndex];
-
-        // 3. map 생성 
-        ///GameObject map = Instantiate<GameObject>(prefab);
-        //if (map == null) return roomData;
-
         //var mainSpawnRoot = map.transform.Find("MainSpawnPoints");
         //if (mainSpawnRoot != null)
         //{
