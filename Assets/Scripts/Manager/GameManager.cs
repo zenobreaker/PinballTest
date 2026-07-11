@@ -11,6 +11,7 @@ public class GameManager
         NONE,
         BEGIN_STAGE,
         PROCESS_BATTLE,
+        PROCESS_CHOICE,
         FINISH_STAGE,
     };
 
@@ -31,9 +32,12 @@ public class GameManager
         if (IsDuplicate) return;
 
         stageManager = GetComponent<StageManager>();
+    }
 
-        if (Instance == this)
-            SceneManager.sceneLoaded += HandleSceneLoaded;
+    protected override void Start()
+    {
+        base.Start();
+        RunStageAsync().Forget(); 
     }
 
     private void OnEnable()
@@ -55,7 +59,6 @@ public class GameManager
     protected override void SyncDataFromSingleton()
     {
         base.SyncDataFromSingleton();
-        SceneManager.sceneLoaded -= HandleSceneLoaded;
         this.stageManager = Instance.StageManager;
     }
 
@@ -67,13 +70,6 @@ public class GameManager
         }
     }
 
-    private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        if (scene.name == "Stage")
-        {
-            RunStageAsync().Forget();
-        }
-    }
 
     private async UniTaskVoid RunStageAsync()
     {
@@ -83,9 +79,6 @@ public class GameManager
         StageResult result = await stageManager.RunStageFlowAsync(this.GetCancellationTokenOnDestroy());
 
         SetGameState(GameState.FINISH_STAGE);
-
-        //  결과를 (AppManager)에게 넘겨서 뒷수습을 맡김.
-       // AppManager.Instance.HandleStageResult(result);
     }
 
     public void OnPrecessBattle()

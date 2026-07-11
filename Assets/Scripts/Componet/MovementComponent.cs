@@ -16,6 +16,8 @@ public class MovementComponent : MonoBehaviour
     private CancellationTokenSource cts;
     private bool isStatusEffectRestricted = false;
 
+    public float MoveSpeed { set { moveSpeed = value; } }
+
     private void Awake()
     {
         boxCollider = GetComponent<BoxCollider2D>();

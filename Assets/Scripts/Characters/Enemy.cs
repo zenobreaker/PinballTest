@@ -155,6 +155,21 @@ public class Enemy
 
     }
 
+    public void SetStatData(MonsterInfo info)
+    {
+        if (info == null)
+            return;
+
+
+        healthPoint.SafeInvoke(v => v.SetHealthPoint(info.hp));
+
+        if (TryGetComponent<MovementComponent>(out var move))
+            move.MoveSpeed = info.speed;
+
+        status.SetStatusValue(StatusType.ATTACK, info.attack);
+        status.SetStatusValue(StatusType.DEFENSE, info.defense);
+    }
+
     private async UniTaskVoid HandleDeath()
     {
         await UniTask.Delay(TimeSpan.FromSeconds(0.2f));
@@ -166,15 +181,9 @@ public class Enemy
         // 이미 파괴 절차에 들어간 객체라면 무시! (Missing 에러 방어)
         if (this == null || gameObject == null || !gameObject.activeInHierarchy)
             return;
+
         base.Dead();
         gameObject.SafeInvoke(v => v.SetActive(false));
-    }
-
-    private void LookAttacker(GameObject attacker)
-    {
-        if (attacker == null) return;
-
-        transform.LookAt(attacker.transform, Vector3.up);
     }
 
 

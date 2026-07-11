@@ -17,7 +17,9 @@ public class Ball : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
 
         int ballLayer = LayerMask.NameToLayer("Ball");
+        int azLayer = LayerMask.NameToLayer("AttackZone");
         Physics2D.IgnoreLayerCollision(ballLayer, ballLayer, true);
+        Physics2D.IgnoreLayerCollision(ballLayer, azLayer, true);
         myCollider = GetComponent<Collider2D>();
     }
 

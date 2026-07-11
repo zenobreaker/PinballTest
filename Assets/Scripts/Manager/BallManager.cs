@@ -75,34 +75,40 @@ public class BallManager : Singleton<BallManager>
         // 지정된 시간(interval)만큼 대기
         await UniTask.Delay(TimeSpan.FromSeconds(autoFireDelay), cancellationToken: this.GetCancellationTokenOnDestroy());
 
-        // 대기가 끝나면 '현재 설정된 방향'을 고정값으로 넘겨주어 발사 시작
-        LaunchRoutineAsync(currentAimDirection, this.GetCancellationTokenOnDestroy()).Forget();
+        TryShoot();
     }
 
+    private void TryShoot()
+    {
+        // 발사 루틴이 이미 돌고 있거나, 공을 다 썼다면 종료
+        if (isRoutineRunning) return;
+
+        // 쏠 공이 하나라도 남아있다면 발사 루틴 시작
+        if (activeBallCount < maxBallCount)
+        {
+            LaunchRoutineAsync(currentAimDirection, this.GetCancellationTokenOnDestroy()).Forget();
+        }
+    }
 
     private async UniTaskVoid LaunchRoutineAsync(Vector2 direction, CancellationToken cancellationToken)
     {
         isRoutineRunning = true;
 
         // 쏠 수 있는 공이 남아있을 때까지 반복 (이 루틴은 처음에 받은 direction을 끝까지 유지함)
-        while (activeBallCount < maxBallCount)
+        if (activeBallCount < maxBallCount)
         {
             BallRuntimeData ballToLaunch = currentBalls[activeBallCount];
             OnLaunch?.Invoke(ballToLaunch, direction);
             activeBallCount++;
-
-            // 지정된 시간 대기
-            await UniTask.Delay(TimeSpan.FromSeconds(launchInterval), cancellationToken: cancellationToken);
         }
+
+        // 지정된 발사 간격만큼 대기 후 루틴 종료
+        await UniTask.Delay(TimeSpan.FromSeconds(launchInterval), cancellationToken: cancellationToken);
 
         // 루틴이 끝남
         isRoutineRunning = false;
 
-        // 만약 공을 다 쏘기도 전에 공들이 모두 튕겨서 돌아왔다면, 즉시 다음 턴 시작 방어 코드
-        if (activeBallCount <= 0)
-        {
-            ScheduleNextTurn().Forget();
-        }
+        TryShoot();
     }
 
     // 공이 바닥에 닿아 회수될 때 호출
@@ -110,10 +116,7 @@ public class BallManager : Singleton<BallManager>
     {
         activeBallCount--;
 
-        // 발사 루틴이 끝났고, 모든 공이 회수되었다면 자동으로 다음 턴 시작
-        if (activeBallCount <= 0 && !isRoutineRunning)
-        {
-            ScheduleNextTurn().Forget();
-        }
+        // 공이 돌아왔으니 쏠 수 있는 여유가 생겼음 -> 즉시 발사 시도
+        TryShoot();
     }
 }

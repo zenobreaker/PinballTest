@@ -45,10 +45,7 @@ public class Character
             status.OnSetHealth += healthPoint.SetHealthPoint;
     }
 
-    protected virtual void Start()
-    {
-
-    }
+    protected virtual void Start() { }
 
     protected virtual void OnDisable()
     {
@@ -79,10 +76,11 @@ public class Character
     public virtual void Play_CameraShake() { }
     #endregion
 
-   
-    public virtual void SetStatus() { }
 
-    protected virtual void Dead() { }
+    protected virtual void Dead() 
+    {
+        OnDead?.Invoke(this);
+    }
 
 
     public static implicit operator GameObject(Character c)

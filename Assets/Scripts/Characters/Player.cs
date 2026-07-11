@@ -93,19 +93,14 @@ public class Player
     public void OnDamage(GameObject attacker, Weapon causer, Vector3 hitPoint, DamageEvent damageEvent)
     {
 
-        // 1. 에어본/넉백 적용
-        ApplyLaunch(attacker, causer, damageEvent);
-
-        // 2. 데미지 계산 및 적용 
-        // 💡 주의: 이 함수 내부에서 이미 HP를 깎고 state.SetDamagedMode()를 호출합니다!
+        // 이 함수 내부에서 이미 HP를 깎고 state.SetDamagedMode()를 호출합니다!
         damageHandle.SafeInvoke(v => v.OnDamage(attacker, damageEvent));
 
         // 3. 살았는지 죽었는지 판단
         if (healthPoint.Dead == false)
         {
-            return; // 💡 이미 DamageHandle에서 상태를 Damaged로 바꿨으므로 여기서 또 할 필요 없음!
+            return;
         }
-
         // --- 여기서부터는 죽었을 때의 처리 ---
 
         Collider collider = GetComponent<Collider>();
@@ -128,45 +123,4 @@ public class Player
         base.Dead();
         Destroy(gameObject);
     }
-
-    public override void End_Damaged()
-    {
-        base.End_Damaged();
-
-    }
-
-    public void ApplyLaunch(GameObject attacker, Weapon causer, DamageEvent devt)
-    {
-        ApplyLaunch(attacker, causer, devt?.hitData);
-    }
-
-    public void ApplyLaunch(GameObject attacker, Weapon causer, HitData hitData)
-    {
-        //launch?.ApplyLaunch(attacker, causer, hitData);
-    }
-
-    public void SetActiveSkills()
-    {
-        //AppManager.Instance.SetActiveSkills(1, skill);
-    }
-
-    public override void SetStatus()
-    {
-        //if (PlayerManager.Instance != null)
-        //{
-        //    CharStatusData data = PlayerManager.Instance.GetCharacterStatus(1);
-        //    status?.SetStatusData(data);
-        //}
-    }
-
-    public void SetEquipments()
-    {
-        //if(PlayerManager.Instance != null)
-        //{
-        //    CharEquipmentData data = PlayerManager.Instance.GetCharEquipmentData(1);
-        //    equipment?.SertEquipmentData(data);
-        //}
-    }
-
-
 }

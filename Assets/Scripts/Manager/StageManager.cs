@@ -26,22 +26,65 @@ public sealed class StageManager : MonoBehaviour
 
     public StageState stageState;
 
-    private int currentStageChapter;
-    public int CurStageChapter { get => currentStageChapter; }
+    [Header("스테이지 데이터 설정")]
+    [Tooltip("에디터에서 만든 SO_StageInfo를 넣어주세요.")]
+    [SerializeField] private SO_StageInfo soStageInfo;
+
+    [Header("스폰 설정")]
+    [Tooltip("에디터에서 생성한 MapGrid 오브젝트를 여기에 드래그 앤 드롭 하세요.")]
+    [SerializeField] private Transform spawnPointContainer;
 
     private StageInfo currentStage;
 
     private SpawnManager spawnManager;
-    private RoomManager roomManager;
+
+    // 수집된 스폰 포인트들을 담을 리스트
+    private List<Transform> enemySpawnPoints = new List<Transform>();
 
     private bool bEnableSpawn = false;
 
+    public event Action OnStageStart;
     public event Action OnProcessBattle;
 
     private void Awake()
     {
         spawnManager = GetComponent<SpawnManager>();
-        roomManager = GetComponent<RoomManager>();
+
+        InitializeStageData();
+        InitializeSpawnPoints();
+    }
+
+    public void InitializeStageData()
+    {
+        if (soStageInfo != null)
+        {
+            // SO 데이터를 런타임 클래스(StageInfo)로 반환받아 덮어씌움
+            currentStage = soStageInfo.ToRuntimeData();
+            Debug.Log($"[StageManager] 스테이지 {currentStage.id} 데이터를 성공적으로 로드했습니다. 총 웨이브: {currentStage.wave}");
+        }
+        else
+        {
+            Debug.LogError("[StageManager] SO_StageInfo가 인스펙터에 연결되지 않았습니다!");
+        }
+    }
+
+    // 자식 오브젝트(SpawnPoint)들을 수집하는 함수
+    private void InitializeSpawnPoints()
+    {
+        enemySpawnPoints.Clear();
+
+        if (spawnPointContainer != null)
+        {
+            foreach (Transform child in spawnPointContainer)
+            {
+                enemySpawnPoints.Add(child);
+            }
+            Debug.Log($"[StageManager] 총 {enemySpawnPoints.Count}개의 스폰 포인트를 로드했습니다.");
+        }
+        else
+        {
+            Debug.LogWarning("[StageManager] Spawn Point Container(MapGrid)가 인스펙터에 할당되지 않았습니다!");
+        }
     }
 
     private void OnEnable()
@@ -58,7 +101,6 @@ public sealed class StageManager : MonoBehaviour
     {
         Debug.Log("[StageManager] Pool Ready! 스테이지 생성을 시작합니다.");
         bEnableSpawn = true;
-        // AwaitStage 코루틴이 이 플래그를 보고 루프를 탈출함
     }
 
     public void ResetStageData()
@@ -86,34 +128,30 @@ public sealed class StageManager : MonoBehaviour
                 await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken: token);
             }
 
-            // 맵 로드 
-            RoomData roomData = roomManager.LoadRoom(currentStage);
-
             bool isPlayerDead = false;
 
             // 웨이브 루프 시작!
             while (currentWave <= currentStage.wave)
             {
-                var groupIds = currentStage.groupIds;
-                if (groupIds.Count > 0)
-                {
-                    // 적 스폰 대기
-                    await spawnManager.SpawnNPCAsync(groupIds[currentWave - 1], roomData.EnemySpawnPoints, true, token);
-                }
+                Debug.Log($"현재 웨이브 : {currentWave} ");
+                // 적 스폰 대기
+                await spawnManager.SpawnEnemiesAsync(currentStage.waves[currentWave - 1],
+                    enemySpawnPoints, token);
 
                 stageState = StageState.Battle;
                 OnProcessBattle?.Invoke();
 
-                // 💡 [핵심] 전투 끝날 때까지 여기서 무한 대기! (이벤트 체인 불필요)
+                //  전투 끝날 때까지 여기서 무한 대기! (이벤트 체인 불필요)
                 await UniTask.WaitUntil(() =>
-                    spawnManager.ActiveEnemyCount == 0 || spawnManager.ActivePlayerCount == 0,
+                    spawnManager.ActiveEnemyCount == 0,
                     cancellationToken: token);
 
-                if (spawnManager.ActivePlayerCount == 0)
-                {
-                    isPlayerDead = true;
-                    break; // 사망 시 즉시 루프 탈출
-                }
+                //TODO : 플레이어 사망 처리 
+                //if (spawnManager.ActivePlayerCount == 0)
+                //{
+                //    isPlayerDead = true;
+                //    break; // 사망 시 즉시 루프 탈출
+                //}
 
                 currentWave++;
             }
