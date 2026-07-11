@@ -41,10 +41,6 @@ public class ApplyDamageAction
                 evt.IgnoreDefenseRate = 0.0f; 
                 evt.BaseDamage = finalPower * stackCount; 
                 break;
-            case DamageType.DOT_HATERD:
-                evt.IgnoreDefenseRate = 1.0f;
-                evt.BaseDamage = finalPower * stackCount;
-                break; 
         }
 
         Debug.Log("DOT Call");

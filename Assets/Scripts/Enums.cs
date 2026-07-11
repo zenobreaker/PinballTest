@@ -6,38 +6,6 @@ public enum MonsterGrade { NONE = 0, NORMAL = 1, ELITE, BOSS };
 //  Language
 public enum LanguageType { KR, EN }
 
-///////////////////////////////////////////////////////////////////////////////
-//  Record UI Type 
-public enum RecordUIMode
-{
-    DRAFT,          // 새로운 레코드를 획득하는 모드
-    SELECT_OWNED,    // 보유 중인 레코드를 선택하는 모드 (아카이브 보관용)
-    SELECT_SAVED,   // 지난 회차에 저장한 레코드 선택하는 모드
-    DELETE,         // 선택한 레코드를 제거하는 모드
-    VIEW,           // 오로직 보여주기만 하는 모드
-}
-
-///////////////////////////////////////////////////////////////////////////////
-//  Exlplore
-public enum ExploreState
-{
-    NONE,
-    READY, // 탐사 선택 직후
-    ON_EXPLORE, // 탐사 메인 씬
-    IN_STAGE,   // 실제 전투
-    STAGE_CLEAR, // 전투 종료 및 보상 획득 시점
-    EXPLORE_FINISH,     // 탐사 전체 종료
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Node State 
-public enum MapNodeState
-{
-    Locked,     // 선택 불가 (다른 분기점이거나 아직 못 가는 미래)
-    Selectable, // 선택 가능 (현재 노드에서 갈 수 있는 다음 노드)
-    Current,    // 현재 내 위치
-    Cleared     // 이미 지나온 과거의 노드
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 //  StageType
@@ -106,38 +74,15 @@ public enum StatusType
 public enum DamageType
 {
     NORMAL = 0,
-    STRONG,
-    KNOCKBACK,
-    DOWN,
-    AIRBORNE,
     DOT_BLEED,
     DOT_BURN,
     DOT_POISON,
-
-    DOT_HATERD,
 
     MAX
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
-//  Input 
-public enum InputCommandType
-{
-    NONE = 0,
-    ACTION = 1,
-    SKILL,
-    MOVE,
-    DASH,
-    MAX,
-}
 
-///////////////////////////////////////////////////////////////////////////////
-//  AI State
-public enum AIState
-{
-    WAIT = 0, PATROL, APPROACH, ACTION, DAMAGED, DEAD, MAX,
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Buff
@@ -203,29 +148,8 @@ public enum TriggerEvent
     ON_ENENMY_KILLED
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//  Skill Trigger Time
-public enum SkillTriggerTime
-{
-    OnExecute,
-    OnBeginDoAction,
-    OnJudgeAttack,
-    OnEndDoAction,
-    OnSoundEvent,
-    OnCameraShake,
-}
 
-///////////////////////////////////////////////////////////////////////////////
-//  Record Type 
-public enum RecordType
-{
-    NONE,
-    EMPTY,
-    PASSIVE,
-    AUGMENT, // 증강 (수치 강화) 
-    MODIFY,  // 변형 (기믹 변형 : 관통 제거 등등) 
-    UNIQUE, // 독자적 (완전히 새로운 행동) 
-}
+
 
 // 필터링을 위한 Enum (시트의 TargetFilter와 맞춤)
 public enum TargetFilterType

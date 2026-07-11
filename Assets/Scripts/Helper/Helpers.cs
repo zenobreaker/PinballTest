@@ -184,6 +184,8 @@ public static class UIHelpers
     public static Canvas CreateBillboardCanvas(string resourceName, Transform transform, Camera camera)
     {
         GameObject prefab = Resources.Load<GameObject>(resourceName);
+        if (prefab == null) return null;
+
         GameObject obj = GameObject.Instantiate<GameObject>(prefab, transform);
 
         Canvas canvas = obj.GetComponent<Canvas>();

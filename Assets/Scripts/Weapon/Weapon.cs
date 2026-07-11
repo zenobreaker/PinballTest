@@ -23,8 +23,9 @@ public class HitData
 
     public bool IsDOTEffect()
     {
-        return DamageType == DamageType.DOT_BLEED || DamageType == DamageType.DOT_BURN ||
-            DamageType == DamageType.DOT_HATERD || DamageType == DamageType.DOT_POISON;
+        return DamageType == DamageType.DOT_BLEED || 
+            DamageType == DamageType.DOT_BURN || 
+            DamageType == DamageType.DOT_POISON;
     }
 
     public HitData Clone()
@@ -56,30 +57,13 @@ public class DamageData
     [Tooltip("캐릭터 스탯 반영 비율 (1.0 = 공격력의 100%)")]
     public float statCoefficient = 0.0f;
 
-    [Header("Launch & Down Settings")]
-    public bool bDownable = false;
-    public bool bLauncher = false;
-
     [Header("Sound")]
     public string SoundName;
-
-    [Header("Camera Shake")]
-    public Vector3 impulseDirection;
-
-    //public SO_CameraShakePreset csp;
 
     [Header("Hit")]
     public HitData hitData;
 
     public float ignoreDefenseRate = 0.0f;
-
-    //public DamageEvent GetMyDamageEvent(GameObject attacker,
-    //    bool bFirstHit = false, bool bExtraCrit = false,
-    //    float multiplier = 1.0f)
-    //{
-    //    return GetMyDamageEvent(attacker.GetComponent<StatusComponent>(), bFirstHit,
-    //        bExtraCrit, multiplier);
-    //}
 
     public DamageEvent GetMyDamageEvent(
         StatusComponent attackerStatus,
@@ -89,6 +73,7 @@ public class DamageData
     {
         return DamageCalculator.GetMyDamageEvent(attackerStatus, this,isFirstHit,extraCrit, multiplier);
     }
+
     public void PlayHitSound()
     {
         if (hitData == null) return;
@@ -102,22 +87,11 @@ public class DamageData
         clone.damageType = this.damageType;
         clone.baseDamage = this.baseDamage;
         clone.statCoefficient = this.statCoefficient;
-        clone.bDownable = bDownable;
-        clone.bLauncher = bLauncher;
         clone.SoundName = SoundName;
-        clone.impulseDirection = impulseDirection;
-        //clone.csp = csp;
         clone.hitData = this.hitData.Clone();
         clone.ignoreDefenseRate = this.ignoreDefenseRate;
         return clone;
     }
-}
-
-[Serializable]
-public class DamageSequence
-{
-    public float hitDelay = -1.0f;
-    public List<DamageData> damageDatas = new List<DamageData>();
 }
 
 
@@ -200,17 +174,6 @@ public class ActionData
     }
 }
 
-//public class MissingHPDamageModifier
-//{
-//    // 비례율 (예: 0.05)
-//    public float Ratio { get; set; }
-
-//    // 최대 피해 상한선 (0 또는 음수면 상한 없음)
-//    public float DamageCap { get; set; }
-
-//    // 이 모디파이어의 출처 (디버깅용: "Passive_Woe", "Item_Blade")
-//    public string SourceId { get; set; }
-//}
 
 public class DamageEvent
 {
@@ -258,9 +221,6 @@ public class Weapon : MonoBehaviour
 {
     public bool bDebug = false;
 
-    [Header("Weapon Settings")]
-    [SerializeField] protected WeaponType type;
-    public WeaponType Type { get => type; }
 
     //[SerializeField] protected SO_Action so_Action;
    // public SO_Action GetActionData { get => so_Action; }
@@ -280,9 +240,7 @@ public class Weapon : MonoBehaviour
     protected Character ownerCharacter;
     protected WeaponController weaponController;
 
-    protected StateComponent state;
     protected StatusComponent status;
-   // protected MovementComponent moving;
 
     public event Action<GameObject> OnLastAttackExecuted;
 
@@ -291,15 +249,8 @@ public class Weapon : MonoBehaviour
         rootObject = transform.root.gameObject;
         Debug.Assert(rootObject != null);
 
-        state = rootObject.GetComponent<StateComponent>();
         status = rootObject.GetComponent<StatusComponent>();
         ownerCharacter = rootObject.GetComponent<Character>();
-       // moving = rootObject.GetComponent<MovementComponent>();
-
-        //if (so_Action != null)
-        //    actionDatas = so_Action.actionDatas;
-        //if (so_Damage != null)
-        //    damageDatas = so_Damage.damageDatas;
     }
 
     protected virtual void Start()
@@ -315,7 +266,6 @@ public class Weapon : MonoBehaviour
 
     public void Equip()
     {
-        Debug.Log($"Equip : {type.ToString()}");
 
         //TODO : 장착 애니메이션이 없으므로 여기서 이 함수를 콜함
 
@@ -341,10 +291,6 @@ public class Weapon : MonoBehaviour
 
     public virtual void DoAction(int index = 0)
     {
-        if (state.IdleMode == false)
-            return;
-
-        state.SetActionMode();
         CheckStop(index);
     }
 
@@ -352,8 +298,6 @@ public class Weapon : MonoBehaviour
 
     public virtual void End_DoAction()
     {
-        state.SetIdleMode();
-
         if (bDirtyMove)
         {
             bDirtyMove = false;

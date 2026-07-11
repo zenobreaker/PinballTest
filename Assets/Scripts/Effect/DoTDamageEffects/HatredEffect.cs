@@ -8,7 +8,6 @@ public class HatredEffect
     {
         Type = EffectType.DEBUFF;
         Triggers.Add(new PeriodicTickTrigger(tickInterval));
-        Actions.Add(new ApplyDamageAction(DamageType.DOT_HATERD, power));
     }
 
     public override BuffStackPolicy StackPolicy => BuffStackPolicy.IGNOREIFEXSIST;

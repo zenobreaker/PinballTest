@@ -22,12 +22,8 @@ public class Enemy
     public bool Boss { get => isBoss; set { isBoss = value; } }
 
     private DamageHandleComponent damageHandle;
-
-    private List<ActionComponent> actionComponents = new();
-    //protected SkillComponent skill;
-    protected WeaponComponent weapon;
-
     private MonsterGrade grade;
+    private CancellationTokenSource damageCTS;
 
     protected override void Awake()
     {
@@ -52,12 +48,6 @@ public class Enemy
         }
 
         damageHandle = GetComponent<DamageHandleComponent>();
-        //launch = GetComponent<LaunchComponent>();
-        //skill = GetComponent<SkillComponent>();
-        weapon = GetComponent<WeaponComponent>();
-
-        if (weapon != null) actionComponents.Add(weapon);
-      //  if (skill != null) actionComponents.Add(skill);
         Debug.Assert(damageHandle != null);
         damageHandle.OnDamagedEvent += HandleHitReaction;
     }
@@ -70,16 +60,15 @@ public class Enemy
 
     protected void OnEnable()
     {
-        if (state != null)
-            state.OnStateTypeChanged += ChangeType;
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
 
-        if (state != null)
-            state.OnStateTypeChanged -= ChangeType;
+        damageCTS?.Cancel();
+        damageCTS?.Dispose();
+        damageCTS = null;
 
         BattleManager.Instance.SafeInvoke(v => v.UnreistEnemy(this));
         CancelInvoke();
@@ -89,16 +78,12 @@ public class Enemy
     public override void Start_DoAction()
     {
         base.Start_DoAction();
-        foreach (var ac in actionComponents)
-            if (ac.InAction) ac.StartAction();
     }
 
     public override void End_DoAction()
     {
         base.End_DoAction();
         bInAction = false;
-        foreach (var ac in actionComponents)
-            if (ac.InAction) ac.EndDoAction();
 
         OnEndDoAction?.Invoke();
     }
@@ -106,15 +91,11 @@ public class Enemy
     public override void Begin_JudgeAttack(AnimationEvent e)
     {
         base.Begin_JudgeAttack(e);
-        foreach (var ac in actionComponents)
-            if (ac.InAction) ac.BeginJudgeAttack(e);
     }
 
     public override void End_JudgeAttack(AnimationEvent e)
     {
         base.End_JudgeAttack(e);
-        foreach (var ac in actionComponents)
-            if (ac.InAction) ac.EndJudgeAttack(e);
     }
 
     public void OnDamage(GameObject attacker,
@@ -124,45 +105,20 @@ public class Enemy
             return;
 
         damageHandle.SafeInvoke(v => v.OnDamage(attacker, damageEvent));
+        damageCTS?.Cancel();
+        damageCTS?.Dispose();
 
-        // 💡 3. [보스 vs 잡몹 구분] 피격 애니메이션(경직) 처리
-        if (isBoss)
-        {
-            // 보스는 슈퍼아머! 
-            // 체력이 일정 이하로 깎이는 등 특수 조건(그로기)이 아니라면 피격 모션을 생략합니다.
-            // ex) if (IsGroggyConditionMet()) { state?.SetDamagedMode(); visual?.PlayDamagedAnimation(); }
-        }
-        else
-        {
-            // 일반 몬스터는 때릴 때마다 확실한 경직을 줍니다.
-            // 현재 액션을 강제로 끊고 피격 모션으로 전환합니다.
-            // 만약 공격 중이었다면 캔슬!
-            if (bInAction)
-            {
-                End_DoAction();
-            }
+        damageCTS = new CancellationTokenSource();
 
-            // Look Attacker 
-            LookAttacker(attacker);
-            ApplyLaunch(attacker, causer, damageEvent);
-        }
-
+        Change_Color(0.15f, damageCTS.Token).Forget();
 
         if (healthPoint.Dead == false)
             return;
 
-        // Dead..
-        state.SafeInvoke(v => v.SetDeadMode());
-        Collider collider = GetComponent<Collider>();
-        collider.isTrigger = true;
-        rigidbody.isKinematic = true;
-
-        visual.SafeInvoke(v => v.PlayDeadAnimation());
         HandleDeath().Forget();
     }
 
 
-    // 💡 IEnumerator -> async UniTaskVoid 로 변경
     private async UniTaskVoid Change_Color(float time, CancellationToken token)
     {
         try
@@ -197,16 +153,11 @@ public class Enemy
     {
         base.End_Damaged();
 
-        if (state != null)
-            state.SetIdleMode();
-
-        foreach (var ac in actionComponents)
-            ac.EndDoAction();
     }
 
     private async UniTaskVoid HandleDeath()
     {
-        await UniTask.Delay(TimeSpan.FromSeconds(2.0f));
+        await UniTask.Delay(TimeSpan.FromSeconds(0.2f));
         Dead();
     }
 
@@ -219,14 +170,6 @@ public class Enemy
         gameObject.SafeInvoke(v => v.SetActive(false));
     }
 
-    private void ChangeType(StateType prevType, StateType newType)
-    {
-        if (newType == StateType.Dead)
-        {
-            OnDead?.Invoke(this);
-        }
-    }
-
     private void LookAttacker(GameObject attacker)
     {
         if (attacker == null) return;
@@ -234,42 +177,6 @@ public class Enemy
         transform.LookAt(attacker.transform, Vector3.up);
     }
 
-    public void ApplyLaunch(GameObject attacker, Weapon causer, DamageEvent devt)
-    {
-        ApplyLaunch(attacker, causer, devt?.hitData);
-    }
-
-    public void ApplyLaunch(GameObject attacker, Weapon causer, HitData hitData)
-    {
-        //launch.SafeInvoke(v => v.ApplyLaunch(attacker, causer, hitData));
-    }
-
-
-    //public void SetGrade(MonsterGrade monsterGrade)
-    //{
-    //    grade = monsterGrade;
-    //    if (grade == MonsterGrade.BOSS)
-    //        isBoss = true;
-    //}
-
-    //public void SetGrade(MonsterData data)
-    //{
-    //    if (data != null)
-    //        SetGrade(data.monsterGrade);
-    //}
-
-    //public void SetStatData(MonsterStatData statData)
-    //{
-    //    if (statData == null || status == null) return;
-
-    //    status.SetStatusValue(StatusType.ATTACK, statData.attack);
-    //    status.SetStatusValue(StatusType.DEFENSE, statData.defense);
-    //    status.SetStatusValue(StatusType.MOVESPEED, statData.speed);
-    //    status.SetStatusValue(StatusType.ATTACKSPEED, 1.0f);
-
-    //    if (healthPoint != null)
-    //        healthPoint.SetMaxHP = statData.hp;
-    //}
 
     private void HandleHitReaction(DamageEvent damgeEvent)
     {
@@ -281,7 +188,7 @@ public class Enemy
         }
         else
         {
-            state.SafeInvoke(v => v.SetDamagedMode(damgeEvent.hitData));
+         
         }
     }
 }

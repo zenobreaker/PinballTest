@@ -15,7 +15,6 @@ public static class EffectFactory
             "Burn" => new BurnEffect(id, desc, duration, tick, power),
             "Bleed" => new BleedEffect(id, desc, duration, tick, power),
             "Poison" => new PoisonEffect(id, desc, duration, tick, power),
-            "Curse_Hatred" => new HatredEffect(id, desc, duration, tick, power),
             "Curse" => new CurseEffect(id, desc, duration),
             _ => null
         };

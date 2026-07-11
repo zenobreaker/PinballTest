@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,6 +20,7 @@ public class HealthPointComponent : MonoBehaviour
 
     private Image hpGauge;
     private Image delayGauge;
+    private TMP_Text healthText;
     private Canvas uiEnemyCanvas;
     private Character ownerChar;
 
@@ -53,12 +55,16 @@ public class HealthPointComponent : MonoBehaviour
             isBoss = enemyComp.Boss;
             if (enemyComp.Boss) return; 
             uiEnemyCanvas = UIHelpers.CreateBillboardCanvas(uiEnemyName, transform, Camera.main);
+            if (uiEnemyCanvas == null) return; 
+
             uiEnemyCanvas.gameObject.SetActive(false);
 
             Transform gauge = uiEnemyCanvas.transform.FindChildByName("Image_Foreground");
             Transform delay = uiEnemyCanvas.transform.FindChildByName("Image_Foreground_Delay");
+            Transform text = uiEnemyCanvas.transform.FindChildByName("Health_Text");
             hpGauge = gauge.GetComponent<Image>();
             delayGauge = delay.GetComponent<Image>();
+            healthText = text.GetComponent<TMP_Text>();
         }
     }
 
@@ -137,6 +143,12 @@ public class HealthPointComponent : MonoBehaviour
 
             hpGauge.fillAmount = currentHealthPoint / maxHealthPoint;
             uiEnemyCanvas.SafeInvoke(v => v.gameObject.SetActive(true));
+        }
+
+
+        if (healthText != null)
+        {
+            healthText.text = currentHealthPoint.ToString();
         }
 
         OnChangedHP_TwoParam?.Invoke(currentHealthPoint, maxHealthPoint);
