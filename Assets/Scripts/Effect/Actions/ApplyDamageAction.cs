@@ -19,7 +19,7 @@ public class ApplyDamageAction
 
     public void Execute(GameObject target, GameObject caster, int stackCount)
     {
-        if (!target.TryGetComponent<DamageHandleComponent>(out var damageHandle))
+        if (!target.TryGetComponent<IDamagable>(out var damage))
             return;
 
         float finalPower = power;   
@@ -44,6 +44,6 @@ public class ApplyDamageAction
         }
 
         Debug.Log("DOT Call");
-        damageHandle.OnDamage(caster, evt);
+        damage.OnDamage(caster, null, Vector3.zero, evt);
     }
 }

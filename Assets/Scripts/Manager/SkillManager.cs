@@ -44,13 +44,33 @@ public class SkillManager : Singleton<SkillManager>
         skill.ApplyEffect();
 
     }
+    public SkillLevelData GetSkillDataByBallType(BallType ballType)
+    {
+        // Normal 타입은 특수 스킬이 없으므로 null 반환
+        if (ballType == BallType.Normal) return null;
 
+        // 보유 중인 스킬 중, 해당 BallType을 가진 ActiveSkill을 찾아 현재 레벨 데이터를 반환
+        foreach (var skill in ownedSkills.Values)
+        {
+            if (skill is ActiveSkill activeSkill && activeSkill.BallType == ballType)
+            {
+                return activeSkill.GetCurrentLevelData();
+            }
+        }
+
+        return null; // 스킬을 아직 획득하지 않았거나 찾지 못한 경우
+    }
     public void RegisterSkill(Skill skill)
     {
         ownedSkills.Add(skill.SkillID, skill); 
     }
 
-    // 💡 3개의 랜덤한 스킬 선택지를 반환하는 함수
+    public bool HasSkill(int skillID)
+    {
+        return ownedSkills.ContainsKey(skillID);
+    }
+
+    // 3개의 랜덤한 스킬 선택지를 반환하는 함수
     public List<Skill> GetRandomAvailableSkills()
     {
         List<Skill> availablePool = new List<Skill>();

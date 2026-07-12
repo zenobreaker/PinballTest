@@ -8,7 +8,6 @@ public class AppManager
     : Singleton<AppManager>
 {
     public Action OnAwaked;
-    public event Action OnSelectedRecordCard;
 
     //private DataBaseManager databaseManager;
     //private SkillManager skillManager;
@@ -20,7 +19,6 @@ public class AppManager
     [SerializeField] private bool bCheat;
     public bool Cheat => bCheat;
 
-    private bool isProcessingReward = false; // 중복 실행 방지 플래그
     // 패시브 스킬을 처리하는 시스템 클래스 
     //private PassiveSystem passiveSystem = new();
 

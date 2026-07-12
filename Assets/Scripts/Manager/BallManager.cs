@@ -4,6 +4,16 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
+[System.Serializable]
+public enum BallType
+{
+    Normal,
+    Fire,
+    Ice,
+    Laser,
+    Ghost,
+    Cluster,
+}
 
 [Serializable]
 public class BallRuntimeData
@@ -11,6 +21,12 @@ public class BallRuntimeData
     public BallType BallType;
 
     public int Level = 1;
+
+    public float NormalBallDamageAmp = 1.0f;
+    public float FrontHitCritChanceBonus;
+    public float BackHitCritChanceBonus;
+    public float HitDamageAmp = 1.0f;
+    public float BounceBonusDamageAmp = 0.0f;
 }
 
 public class BallManager : Singleton<BallManager>
@@ -32,30 +48,33 @@ public class BallManager : Singleton<BallManager>
     // 자동 발사를 위한 타겟 방향 (초기값: 90도 위쪽)
     private Vector2 currentAimDirection = Vector2.up;
 
-
     public event Action<BallRuntimeData, Vector2> OnLaunch;
 
     private Character cachedPlayer;
+
+    private BallRuntimeData cachedData = new();
 
     protected override void Awake()
     {
         base.Awake();
     }
 
-    public void Init(Character player )
+    public void Init(Character player)
     {
         activeBallCount = 0;
         currentBallIndex = 0;
-        currentShootIndex = 0; 
+        currentShootIndex = 0;
         isRoutineRunning = false;
         currentAimDirection = Vector2.up; // 초기 방향 90도 고정
+
+        cachedData = new();
 
         if (player == null)
             cachedPlayer = BattleManager.Instance.GetPrioritizedPlayer();
         else
             cachedPlayer = player;
 
-            currentBalls.Clear();
+        currentBalls.Clear();
         for (int i = 0; i < maxBallCount; i++)
         {
             currentBalls.Add(new BallRuntimeData { BallType = BallType.Normal, Level = 1 });
@@ -68,10 +87,10 @@ public class BallManager : Singleton<BallManager>
     {
         bool isAvailable = true;
 
-        int count = 0; 
+        int count = 0;
         foreach (var ball in currentBalls)
         {
-            if(ball.Level >= 3 || ball.BallType != BallType.Normal)
+            if (ball.Level >= 3 || ball.BallType != BallType.Normal)
             {
                 count++;
             }
@@ -80,7 +99,7 @@ public class BallManager : Singleton<BallManager>
         if (count >= 4)
             isAvailable = false;
 
-        return isAvailable; 
+        return isAvailable;
     }
 
     // 삼택지에서 새로운 볼 획득 또는 업그레이드 시 호출할 함수
@@ -159,6 +178,7 @@ public class BallManager : Singleton<BallManager>
         if (activeBallCount < maxBallCount)
         {
             BallRuntimeData ballToLaunch = currentBalls[currentShootIndex];
+            SetRunTimeData(ballToLaunch);
             OnLaunch?.Invoke(ballToLaunch, direction);
             activeBallCount++;
             currentShootIndex = (currentShootIndex + 1) % maxBallCount;
@@ -180,5 +200,19 @@ public class BallManager : Singleton<BallManager>
 
         // 공이 돌아왔으니 쏠 수 있는 여유가 생겼음 -> 즉시 발사 시도
         TryShoot();
+    }
+
+    public BallRuntimeData GetBallRuntimeData()
+    {
+        return cachedData;
+    }
+
+    private void SetRunTimeData(BallRuntimeData currentData)
+    {
+        currentData.NormalBallDamageAmp = cachedData.NormalBallDamageAmp;
+        currentData.HitDamageAmp = cachedData.HitDamageAmp;
+        currentData.BounceBonusDamageAmp = cachedData.BounceBonusDamageAmp;
+        currentData.FrontHitCritChanceBonus= cachedData.FrontHitCritChanceBonus;
+        currentData.BackHitCritChanceBonus= cachedData.BackHitCritChanceBonus;
     }
 }

@@ -14,9 +14,6 @@ public class HealthPointComponent : MonoBehaviour
     [SerializeField] private float speed = 2.0f;
     [SerializeField] private float hideTime = 3.0f;
 
-    [Header("HUD Hanlder")]
-    //[SerializeField] private SO_HUDHandler handler;
-    //private readonly string path = "SO_HUDHandler";
 
     private Image hpGauge;
     private Image delayGauge;

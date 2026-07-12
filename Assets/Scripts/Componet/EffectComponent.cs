@@ -20,9 +20,23 @@ public class EffectComponent : MonoBehaviour
         Debug.Assert(owner != null);
 
         statusEffect = owner.GetComponent<StatusEffectComponent>();
-
+        owner.OnDead += ClearEffect;
         //if (owner is Player || (owner is Enemy enemy && enemy.Boss))
         //    handler = Resources.Load<SO_HUDHandler>("SO_HUDHandler");
+    }
+
+    private void OnEnable()
+    {
+        Debug.Log($"{name} Effect 초기화");
+
+        foreach (var effect in activeEffects.Values)
+        {
+            effect.OnRemove();
+        }
+
+        activeEffects.Clear();
+        expiredEffects.Clear();
+        DebuffCount = 0;
     }
 
     private void Update()
@@ -45,6 +59,19 @@ public class EffectComponent : MonoBehaviour
             BaseEffect effect = expiredEffects[i];
             RemoveEffect(effect);
         }
+    }
+
+    private void ClearEffect(Character owner)
+    {
+        foreach (var effect in activeEffects.Values)
+        {
+            effect.OnRemove();
+        }
+
+        activeEffects.Clear();
+        expiredEffects.Clear();
+
+        DebuffCount = 0;
     }
 
     public void ApplyEffect(BaseEffect newEffect, GameObject target, GameObject appliedBy)

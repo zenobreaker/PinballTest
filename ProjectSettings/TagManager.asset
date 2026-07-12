@@ -15,8 +15,8 @@ TagManager:
   - DeadZone
   - Ball
   - AttackZone
-  - 
-  - 
+  - Enemy
+  - GhostBall
   - 
   - 
   - 

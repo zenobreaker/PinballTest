@@ -137,8 +137,6 @@ public class StatusComponent : MonoBehaviour
     public TargetFilterType FilterType { get; private set; }
 
     private HealthPointComponent healthPointComponent;
-    private TargetFilterType filterType;
-
 
     private void Awake()
     {
@@ -147,10 +145,6 @@ public class StatusComponent : MonoBehaviour
 
         healthPointComponent = GetComponent<HealthPointComponent>();
 
-        //TODO : 임시적으로 특정 필터로 적용 
-        filterType = TargetFilterType.Shooter;
-
-        FilterType = filterType;
         status?.Init();
     }
 
@@ -232,14 +226,5 @@ public class StatusComponent : MonoBehaviour
         }
     }
 
-    //-------------------------------------------------------------------------
-    // 직업군 관련
-    public bool IsSameJob(TargetFilterType? filter = null)
-    {
-        if(filter == null) return false;
-
-        if(filter == TargetFilterType.ALL) return true;
-        
-        return filterType == (TargetFilterType)filter;
-    }
+   
 }

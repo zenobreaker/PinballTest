@@ -15,15 +15,29 @@ public class MovementComponent : MonoBehaviour
     // 💡 양옆 마찰 방지를 위해 쏘아내는 박스의 너비를 줄이는 비율 (0.8 = 80%)
     [SerializeField] private float boxCastWidthMultiplier = 0.8f;
 
+    private StatusComponent status;
+
     private BoxCollider2D boxCollider;
     private CancellationTokenSource cts;
     private bool isStatusEffectRestricted = false;
 
-    public float MoveSpeed { set { moveSpeed = value; } }
+    public float MoveSpeed { 
+    
+        get
+        {
+            if (status != null)
+                return status.GetStatusValue(StatusType.MOVESPEED);
+            else
+                return moveSpeed;
+        }
+
+        set { moveSpeed = value; } 
+    }
 
     private void Awake()
     {
         boxCollider = GetComponent<BoxCollider2D>();
+        status = GetComponent<StatusComponent>(); 
     }
 
     private void OnEnable()
@@ -47,7 +61,7 @@ public class MovementComponent : MonoBehaviour
             if (!isStatusEffectRestricted)
             {
                 // 이번 프레임에 원래 이동해야 할 거리
-                float desiredMoveDelta = moveSpeed * Time.deltaTime;
+                float desiredMoveDelta = MoveSpeed * Time.deltaTime;
 
                 // 실제 이동할 수 있는 허용 거리 계산
                 float allowedMoveDelta = CalculateAllowedDistance(desiredMoveDelta);

@@ -183,15 +183,15 @@ public class DamageEvent
 
     public HitData hitData;
 
-    //TODO : 잃은 체력 비례 데미지의 대한 상한 조건이 서로 상이할 경우 사용
-    //public List<MissingHPDamageModifier> MissingHPModifiers { get; } = new List<MissingHPDamageModifier>();
     public float MissingHPRatio; // 잃은 체력 비례 데미지
     public float IgnoreDefenseRate;  // 방어력 무시 데미지
     public float MaxHPRatio; // 최대 체력 비례 데미지 
     public float DamageAmp;
+    public float ExtraCritChance;
+    public float BaseCritChance;
+    public float CritMultiplier;
 
     public int AttackInstanceID { get; set; }
-
     public DamageEvent(float value, bool isCrit = false, bool isFisrtHit = false, HitData hitData = null)
     {
         this.BaseDamage = value;
@@ -208,10 +208,38 @@ public class DamageEvent
             this.hitData = new();
     }
 
+    public void AddCritChane(float value)
+    {
+        ExtraCritChance += value;
+    }
     public bool IsDOTEffect()
     {
         if (hitData == null) return false;
         return hitData.IsDOTEffect();
+    }
+
+    public DamageEvent Clone()
+    {
+        // 1. 생성자를 이용해 기본 값 초기화 (hitData는 참조 복사)
+        DamageEvent cloneEvent = new DamageEvent(
+            this.BaseDamage,
+            this.isCrit,
+            this.isFisrtHit,
+            this.hitData
+        );
+
+        // 2. 추가적인 각종 비율 및 배율 데이터 복사
+        cloneEvent.MissingHPRatio = this.MissingHPRatio;
+        cloneEvent.IgnoreDefenseRate = this.IgnoreDefenseRate;
+        cloneEvent.MaxHPRatio = this.MaxHPRatio;
+        cloneEvent.DamageAmp = this.DamageAmp;
+        cloneEvent.ExtraCritChance = this.ExtraCritChance;
+        cloneEvent.BaseCritChance = this.BaseCritChance; 
+        cloneEvent.CritMultiplier = this.CritMultiplier; 
+        cloneEvent.AttackInstanceID = this.AttackInstanceID;
+        cloneEvent.hitData = this.hitData.Clone();
+
+        return cloneEvent;
     }
 }
 

@@ -26,7 +26,13 @@ public abstract class BaseEffect
     public float RemainingTime { get; private set; }
 
     public int StackCount { get; private set; } = 1;
-    public virtual int MaxStack => 1;
+    protected int maxStack = 1;
+    public virtual int MaxStack 
+    { 
+        get { return maxStack; }
+        set { maxStack = value; }
+    }
+
     public virtual BuffStackPolicy StackPolicy => BuffStackPolicy.REFRESH_ONLY;
 
     public List<IEffectTrigger> Triggers { get; private set; } = new();

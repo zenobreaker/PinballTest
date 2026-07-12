@@ -19,19 +19,19 @@ MonoBehaviour:
   levelDatas:
   - skillDescription: "30% \uD655\uB960\uB85C 5\uCD08 \uB0C9\uB3D9. \uC774\uB3D9\uC18D\uB3C4
       10% \uAC10\uC18C, \uCD94\uAC00 \uD53C\uD574 10% "
-    effectValue: 10
+    effectValue: 0.1
     effectChance: 0.3
     effectDuration: 6
     maxStack: 1
   - skillDescription: "35% \uD655\uB960\uB85C 6\uCD08 \uB0C9\uB3D9. \uC774\uB3D9\uC18D\uB3C4
       15% \uAC10\uC18C, \uCD94\uAC00 \uD53C\uD574 15%"
-    effectValue: 15
+    effectValue: 0.15
     effectChance: 0.35
     effectDuration: 7
     maxStack: 1
   - skillDescription: "40% \uD655\uB960\uB85C 7\uCD08 \uB0C9\uB3D9. \uC774\uB3D9\uC18D\uB3C4
       20% \uAC10\uC18C, \uCD94\uAC00 \uD53C\uD574 20%"
-    effectValue: 20
+    effectValue: 0.2
     effectChance: 0.4
     effectDuration: 7
     maxStack: 5

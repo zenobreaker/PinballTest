@@ -10,7 +10,6 @@ public sealed class SpawnManager : MonoBehaviour
 
     private List<Character> spawnedEnemies = new();
 
-    public event Action OnAllPlayersDead;
     public event Action OnAllEnemiesDead;
 
     // 💡 StageManager가 대기할 때 사용할 프로퍼티 추가
@@ -54,6 +53,8 @@ public sealed class SpawnManager : MonoBehaviour
                 {
                     spawnedEnemies.Add(enemy);
                     enemy.OnDead += OnEnemyDead; // 적 사망 이벤트 구독
+                    if (BattleManager.Instance != null)
+                        enemy.OnDead += BattleManager.Instance.NotifyEnemyDie;
 
                     enemy.SetStatData(monsterDatabase.GetMonsterData(spawnData.monsterId));
                 }
@@ -74,7 +75,6 @@ public sealed class SpawnManager : MonoBehaviour
 
     private void OnEnemyDead(Character enemy)
     {
-        enemy.OnDead -= OnEnemyDead;
         spawnedEnemies.Remove(enemy);
         
         ExperienceManager.Instance.SafeInvoke(v => v.AddExp(1));

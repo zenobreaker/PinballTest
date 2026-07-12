@@ -47,7 +47,6 @@ public sealed class StageManager : MonoBehaviour
     private bool bEnableSpawn = false;
     private bool needSkillChoice = false;
 
-    public event Action OnStageStart;
     public event Action OnProcessBattle;
 
     private void Awake()

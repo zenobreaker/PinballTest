@@ -4,7 +4,7 @@ using UnityEngine;
 public class DamageHandleComponent : MonoBehaviour
 {
     public Action OnDamaged;
-    [SerializeField] private float dmgFontOffsetY = 1.5f;
+    [SerializeField] private float dmgFontOffsetY = 0.15f;
 
     private Character character; 
     private HealthPointComponent health;
@@ -30,8 +30,8 @@ public class DamageHandleComponent : MonoBehaviour
 
         if(!damageEvent.IsDOTEffect() && this.TryGetComponent<EffectComponent>(out var effectComp))
         {
-            if(effectComp.HasEffect("Curse") is CurseEffect curse)
-                value *= (1.0f + curse.GetDamageIncrease());
+            if(effectComp.HasEffect("Freeze") is FreezeEffect freeze)
+                value *= (1.0f + freeze.GetDamageIncrease());
         }
 
         health.SafeInvoke(v => v.Damage(value));
@@ -52,6 +52,6 @@ public class DamageHandleComponent : MonoBehaviour
     private void ShowDamageText(float value, DamageEvent damageEvent)
     {
         Vector3 pos = transform.position + Vector3.up * dmgFontOffsetY;
-        //UIManager.Instance.SafeInvoke(v => v.DrawDamageText(pos, value, damageEvent));
+        DamageTextPooler.Instance.SafeInvoke(v => v.ShowDamage(pos, value, damageEvent));
     }
 }

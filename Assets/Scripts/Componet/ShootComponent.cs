@@ -43,7 +43,14 @@ public class ShootComponent : MonoBehaviour
             // 3. Ball 컴포넌트를 가져와서 발사 로직(초기화) 실행
             if (ballObj.TryGetComponent<Ball>(out var ball))
             {
-                ball.SetUpData(owner, data);
+                if (SkillManager.Instance != null)
+                {
+                    SkillLevelData skillData = SkillManager.Instance.
+                        GetSkillDataByBallType(runtimeData.BallType);
+                    ball.SetSkillData(skillData);
+                }
+
+                ball.SetUpData(owner, data, runtimeData);
                 ObjectPooler.FinishSpawn(ballObj);
                 ball.Launch(direction, data.speed);
 

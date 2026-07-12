@@ -35,4 +35,4 @@ MonoBehaviour:
     effectChance: 0.6
     effectDuration: 0
     maxStack: 1
-  ballType: 3
+  ballType: 5

@@ -13,7 +13,6 @@ public class Enemy
     [Header("Material Settings")]
     [SerializeField] private string[] surfaceNames;
     [SerializeField] private Color damageColor;
-    [SerializeField] private float changeColorTime = 0.15f;
 
     private Color[] originColors;
     private Material[] skinMaterials;
@@ -166,6 +165,7 @@ public class Enemy
         if (TryGetComponent<MovementComponent>(out var move))
             move.MoveSpeed = info.speed;
 
+        status.SetStatusValue(StatusType.MOVESPEED, info.speed);
         status.SetStatusValue(StatusType.ATTACK, info.attack);
         status.SetStatusValue(StatusType.DEFENSE, info.defense);
     }

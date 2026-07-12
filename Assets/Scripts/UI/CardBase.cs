@@ -27,7 +27,10 @@ public class CardBase : MonoBehaviour
 
         gameObject.SetActive(true);
 
-        currentSkill = skill; 
+        currentSkill = skill;
+
+        bool isOwned = SkillManager.Instance.HasSkill(skill.SkillID);
+        int targetLevel = isOwned ? (skill.SkillLevel + 1) : 1;
 
         if (skillIcon != null)
             skillIcon.sprite = skill.Icon;
@@ -36,10 +39,10 @@ public class CardBase : MonoBehaviour
             skillNameText.text = skill.Name;
 
         if (skillDescText != null)
-            skillDescText.text = skill.GetDesc(skill.SkillLevel);
+            skillDescText.text = skill.GetDesc(targetLevel);
 
         if (skillLevelText != null)
-            skillLevelText.text = "Lv. " + (skill.SkillLevel).ToString();
+            skillLevelText.text = "Lv. " + targetLevel.ToString();
     }
 
 

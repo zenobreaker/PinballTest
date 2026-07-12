@@ -20,7 +20,7 @@ public class SkillSelectionUI : MonoBehaviour
          List<Skill> randomSkills = SkillManager.Instance.GetRandomAvailableSkills();
         
         
-        // 2. 버튼(CardBase)에 스킬 정보(이름, 효과, 레벨) 세팅 및 이벤트 바인딩 (TODO)
+        // 2. 버튼(CardBase)에 스킬 정보
         for (int i = 0; i < randomSkills.Count; i++) 
         {
             CardBase sb = selectionButtons[i];

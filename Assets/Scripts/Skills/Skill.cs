@@ -50,10 +50,16 @@ public abstract class Skill
 
     public string GetDesc(int level)
     {
-        string result = "";
-        if (LevelDatas.Count > 0 && LevelDatas.Count <= level - 1)
-            result = LevelDatas[level - 1].skillDescription;
-        return result;
+        // 1. 레벨을 인덱스(0부터 시작)로 변환
+        int index = level - 1;
+
+        // 2. 인덱스가 0 이상이고, 리스트의 최대 크기보다 작은지(안전한지) 확인
+        if (index >= 0 && index < LevelDatas.Count)
+        {
+            return LevelDatas[index].skillDescription;
+        }
+
+        return Description;
     }
     public void LevelUp()
     {
@@ -69,6 +75,14 @@ public abstract class Skill
         index = Mathf.Clamp(index, 0, max);
 
         return index;
+    }
+   
+    public SkillLevelData GetCurrentLevelData()
+    {
+        if (LevelDatas.Count > 0 && LevelDatas.Count > skillLevel - 1)
+            return LevelDatas[skillLevel - 1];
+
+        return null;
     }
 
     public virtual void ApplyEffect() { }

@@ -10,6 +10,7 @@ public class BattleManager
     public event Action<GameObject, GameObject, float> OnAnyAttackHitFinish;
 
     private event Action OnFinishBeginBattle;
+    public event Action<Character> OnEnemyDied;
 
     private List<Character> players = new List<Character>();
     private List<Character> enemies = new List<Character>();
@@ -118,6 +119,11 @@ public class BattleManager
         }
 
         bInBattle = true;
+    }
+
+    public void NotifyEnemyDie(Character enemy)
+    {
+        OnEnemyDied?.Invoke(enemy);
     }
 
 

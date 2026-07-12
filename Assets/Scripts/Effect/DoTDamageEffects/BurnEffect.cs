@@ -11,7 +11,6 @@ public class BurnEffect
         Actions.Add(new ApplyDamageAction(DamageType.DOT_BURN, power));
     }
 
-    public override int MaxStack =>  5;
     public override BuffStackPolicy StackPolicy => BuffStackPolicy.STACKABLE;
 }
 

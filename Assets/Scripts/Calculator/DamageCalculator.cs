@@ -22,29 +22,46 @@ public static class DamageCalculator
 
         float result = data.baseDamage + (attack * data.statCoefficient);
         result *= multiplier;
-        
-        crit = bExtraCrit;
-        if (!bExtraCrit)
-        {
-            float v = Random.Range(0.0f, 1.0f);
-            if (v <= critRatio)
-                crit = true;
-        }
-
-        if (crit)
-            result *= critDmg;
 
         DamageEvent evt = new DamageEvent(result, crit, bFirstHit, data.hitData);
         evt.AttackInstanceID = GetNextAttackInstanceID();
-        
         evt.IgnoreDefenseRate = data.ignoreDefenseRate;
+
+        evt.BaseCritChance = critRatio;
+        evt.CritMultiplier = critDmg;
+
         return evt;
     }
+    public static void EvaluateCrit(DamageEvent evt)
+    {
+        // 1. 강제 확정 크리티컬 (bExtraCrit) 처리
+        if (evt.isCrit)
+        {
+            evt.BaseDamage *= evt.CritMultiplier;
+            return;
+        }
+
+        // 2. 기본 확률 + 추가 확률(앞/뒤 타격 등) 합산
+        float finalCritChance = evt.BaseCritChance + evt.ExtraCritChance;
+
+        // 3. 주사위 굴리기!
+        if (Random.Range(0.0f, 1.0f) <= finalCritChance)
+        {
+            evt.isCrit = true;
+            evt.BaseDamage *= evt.CritMultiplier; // 크리티컬 성공 시 배율 적용
+        }
+    }
+
 
     public static float CalcDamage(StatusComponent status, DamageEvent damageEvent)
     {
         if (status == null || damageEvent == null)  
             return 0.0f;
+
+        if (!damageEvent.isCrit)
+        {
+            EvaluateCrit(damageEvent);
+        }
 
         float resultDamage = damageEvent.BaseDamage;
         float defense = status.GetStatusValue(StatusType.DEFENSE);
@@ -84,6 +101,6 @@ public static class DamageCalculator
         // 피해 감소율 = 피격자 방어력 / (방어 상수 + 피격자 방어력)
         float ratio = defense / (CONST_DEFNSE + defense);
 
-        return  (resultDamage * (1 - ratio)) * multiplier;
+        return  Mathf.Round((resultDamage * (1 - ratio)) * multiplier);
     }
 }
