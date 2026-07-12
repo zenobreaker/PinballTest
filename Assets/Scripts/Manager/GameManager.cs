@@ -25,6 +25,8 @@ public class GameManager
     private StageManager stageManager;
     public StageManager StageManager => stageManager;
 
+    [SerializeField] private ResultPopup resultPopup;
+
     protected override void Awake()
     {
         base.Awake();
@@ -32,12 +34,6 @@ public class GameManager
         if (IsDuplicate) return;
 
         stageManager = GetComponent<StageManager>();
-    }
-
-    protected override void Start()
-    {
-        base.Start();
-        RunStageAsync().Forget(); 
     }
 
     private void OnEnable()
@@ -59,7 +55,6 @@ public class GameManager
     protected override void SyncDataFromSingleton()
     {
         base.SyncDataFromSingleton();
-        this.stageManager = Instance.StageManager;
     }
 
     protected void Update()
@@ -67,6 +62,17 @@ public class GameManager
         if (state == GameState.PROCESS_BATTLE)
         {
             OnUpdated?.Invoke(Time.deltaTime);
+        }
+    }
+
+    public void StartStage()
+    {
+        if (stageManager != null)
+        {
+            stageManager.InitializeStageData();
+            stageManager.InitializeSpawnPoints();
+
+            RunStageAsync().Forget();
         }
     }
 
@@ -79,6 +85,8 @@ public class GameManager
         StageResult result = await stageManager.RunStageFlowAsync(this.GetCancellationTokenOnDestroy());
 
         SetGameState(GameState.FINISH_STAGE);
+
+        resultPopup.Show(result.IsSuccess);
     }
 
     public void OnPrecessBattle()
@@ -95,14 +103,5 @@ public class GameManager
             case GameState.PROCESS_BATTLE: OnBattleStage?.Invoke(); break;
             case GameState.FINISH_STAGE: OnFinishStage?.Invoke(); break;
         }
-    }
-
-    public void EnterStage(StageInfo info)
-    {
-        if (info == null) return;
-
-        state = GameState.NONE;
-        stageManager.SetEnteredStage(info);
-        SceneManager.LoadScene(2);
     }
 }

@@ -24,6 +24,7 @@ public class BallManager : Singleton<BallManager>
     private List<BallRuntimeData> currentBalls = new List<BallRuntimeData>();
 
     private int activeBallCount;
+    private int currentBallIndex = 0;
 
     // 발사 루틴 및 예약 제어용 변수
     private bool isRoutineRunning = false;
@@ -33,19 +34,26 @@ public class BallManager : Singleton<BallManager>
 
     public event Action<BallRuntimeData, Vector2> OnLaunch;
 
+    private Character cachedPlayer;
+
     protected override void Awake()
     {
         base.Awake();
-        Init();
     }
 
-    public void Init()
+    public void Init(Character player )
     {
         activeBallCount = 0;
+        currentBallIndex = 0; 
         isRoutineRunning = false;
         currentAimDirection = Vector2.up; // 초기 방향 90도 고정
 
-        currentBalls.Clear();
+        if (player == null)
+            cachedPlayer = BattleManager.Instance.GetPrioritizedPlayer();
+        else
+            cachedPlayer = player;
+
+            currentBalls.Clear();
         for (int i = 0; i < maxBallCount; i++)
         {
             currentBalls.Add(new BallRuntimeData { BallType = BallType.Normal, Level = 1 });
@@ -55,12 +63,21 @@ public class BallManager : Singleton<BallManager>
     }
 
     // 삼택지에서 새로운 볼 획득 또는 업그레이드 시 호출할 함수
-    public void ReplaceOrUpgradeBall(int slotIndex, BallType newType, int level)
+
+    public void ReplaceOrUpgradeBall(ActiveSkill ballSkill)
     {
-        if (slotIndex >= 0 && slotIndex < currentBalls.Count)
+        if (ballSkill == null) return;
+
+        ReplaceOrUpgradeBall(ballSkill.BallType, ballSkill.SkillLevel);
+    }
+
+    public void ReplaceOrUpgradeBall(BallType newType, int level)
+    {
+        if (currentBallIndex >= 0 && currentBallIndex < currentBalls.Count)
         {
-            currentBalls[slotIndex].BallType = newType;
-            currentBalls[slotIndex].Level = level;
+            currentBalls[currentBallIndex].BallType = newType;
+            currentBalls[currentBallIndex].Level = level;
+            currentBallIndex++; 
         }
     }
 
@@ -80,6 +97,9 @@ public class BallManager : Singleton<BallManager>
 
     private void TryShoot()
     {
+        if (cachedPlayer != null && cachedPlayer.IsDead)
+            return;
+
         // 발사 루틴이 이미 돌고 있거나, 공을 다 썼다면 종료
         if (isRoutineRunning) return;
 

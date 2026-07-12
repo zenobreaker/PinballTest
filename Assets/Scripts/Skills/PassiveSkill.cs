@@ -37,37 +37,7 @@ public abstract class PassiveSkill
 
     
     public virtual void OnHit(GameObject target) { }
+    public virtual void OnBallBounce(Ball ball) { }
     public virtual void OnDamaged(DamageData damageData) { }
     public virtual void OnKill(GameObject target) { }
-
-    public virtual void OnSkillCast(SkillUseEvent evt, SkillRuntimeContext context) { }
-    public virtual void OnSkillJudge(SkillUseEvent evt) { }
-    public virtual void OnSkillEnd(SkillUseEvent evt) { }
-
-}
-
-// 탄환 소모 액티브 스킬과 이 패시브 간의 규약용 인터페이스
-public interface IMagicBulletProvider
-{
-    // 탄환 소모를 시도하고, 성공 시 크리티컬 여부 반환
-    bool TryConsumBullet(out bool isCrit);
-
-    // 외부에서 충전해주기 위함
-    void Reload(int amount);
-
-    // 현재 탄환 개수 (UI 표시용 등..) 
-    int CurrentBulletCount { get; }
-}
-
-// TODO : 속성 마법을 사용하면 탄환에 속성 부여하는 기능의 연결 인터페이스
-public interface IElementaryResponder
-{
-
-}
-
-// 공겨 적중 시 알림을 받을 수 있는 인터페이스
-public interface IActtackHitListner
-{
-    // attacker : 공격자 target : 맞은 대상 damage : 입힌 피해 정보
-    void OnAttackHit(GameObject target, DamageData damageData); 
 }

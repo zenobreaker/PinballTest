@@ -49,9 +49,6 @@ public sealed class StageManager : MonoBehaviour
     private void Awake()
     {
         spawnManager = GetComponent<SpawnManager>();
-
-        InitializeStageData();
-        InitializeSpawnPoints();
     }
 
     public void InitializeStageData()
@@ -69,9 +66,12 @@ public sealed class StageManager : MonoBehaviour
     }
 
     // 자식 오브젝트(SpawnPoint)들을 수집하는 함수
-    private void InitializeSpawnPoints()
+    public void InitializeSpawnPoints()
     {
         enemySpawnPoints.Clear();
+
+        if (spawnPointContainer == null)
+            spawnPointContainer = GameObject.FindFirstObjectByType<GridBuilder>()?.transform;
 
         if (spawnPointContainer != null)
         {
@@ -128,7 +128,10 @@ public sealed class StageManager : MonoBehaviour
                 await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken: token);
             }
 
+            Character player = BattleManager.Instance.SafeInvoke(v => v.GetPrioritizedPlayer());
             bool isPlayerDead = false;
+            if(player != null)
+                player.OnDead += (player) => { isPlayerDead = true; };
 
             // 웨이브 루프 시작!
             while (currentWave <= currentStage.wave)
@@ -143,15 +146,13 @@ public sealed class StageManager : MonoBehaviour
 
                 //  전투 끝날 때까지 여기서 무한 대기! (이벤트 체인 불필요)
                 await UniTask.WaitUntil(() =>
-                    spawnManager.ActiveEnemyCount == 0,
+                    spawnManager.ActiveEnemyCount == 0 || isPlayerDead,
                     cancellationToken: token);
 
-                //TODO : 플레이어 사망 처리 
-                //if (spawnManager.ActivePlayerCount == 0)
-                //{
-                //    isPlayerDead = true;
-                //    break; // 사망 시 즉시 루프 탈출
-                //}
+                if (isPlayerDead)
+                {
+                    break; // 사망 시 즉시 루프 탈출
+                }
 
                 currentWave++;
             }
@@ -180,8 +181,4 @@ public sealed class StageManager : MonoBehaviour
         currentStage = stage;
     }
 
-    private void OnStartStage()
-    {
-        bEnableSpawn = true;
-    }
 }

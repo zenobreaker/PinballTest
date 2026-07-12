@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -40,6 +41,13 @@ public abstract class Skill
         skillLevel = level;
     }
 
+    public void LevelUp()
+    {
+        skillLevel++;
+        // 임시로 하드코딩
+        skillLevel = Mathf.Clamp(skillLevel, 1, 3);
+    }
+
     protected  int GetSkillLevel()
     {
         int index = Mathf.Min(skillLevel - 1, LevelDatas.Count - 1);
@@ -48,4 +56,6 @@ public abstract class Skill
 
         return index;
     }
+
+    public virtual void ApplyEffect() { }
 }

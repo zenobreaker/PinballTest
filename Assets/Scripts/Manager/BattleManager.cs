@@ -62,10 +62,6 @@ public class BattleManager
     public void ResistEnemy(Character character)
     {
         enemies.Unique(character);
-
-        // 이미 전투 중인 상태라면 등록하자마자 공격할 타겟을 지정한다. 
-        if (bInBattle)
-            TryAiToJoinBattle(character);
     }
 
     public void UnreistEnemy(Character character) => enemies.Remove(character);
@@ -122,30 +118,8 @@ public class BattleManager
         }
 
         bInBattle = true;
-
-        foreach (var enemy in enemies)
-            TryAiToJoinBattle(enemy);
     }
 
-
-    private void TryAiToJoinBattle(Character target)
-    {
-        //if (target.TryGetComponent<AIBehaviourComponent>(out var ai))
-        //{
-        //    ai.SetCanMove(false);
-
-        //    Character player = GetPrioritizedPlayer();
-        //    if (player == null)
-        //        return;
-
-        //    ai.SetTarget(player.gameObject);
-        //    // 성공적으로 등록했으면 처리
-        //    bool bResult = JoinBattle(player, target);
-        //    if (bResult)
-        //        ai.SetCanMove(true);
-
-        //}
-    }
 
     public void NotifyAttackHit(GameObject attacker, GameObject target, DamageEvent evt)
     {

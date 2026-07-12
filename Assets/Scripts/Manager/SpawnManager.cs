@@ -3,21 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
-using UnityEngine.AI;
-using Random = UnityEngine.Random;
-
-public class SpawnObject
-{
-    public string spawnTag;
-    public Vector3 spawnPos;
-    public Quaternion spawnQuat;
-
-    public void Spawn()
-    {
-        ObjectPooler.DeferredSpawnFromPool(spawnTag, spawnPos, spawnQuat);
-    }
-}
-
 
 public sealed class SpawnManager : MonoBehaviour
 {

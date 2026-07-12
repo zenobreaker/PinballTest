@@ -17,11 +17,13 @@ public class Character
     protected StatusComponent status;
     public StatusComponent Status => status;
 
-    protected bool bInAction = false;
-    public virtual bool InAction { get { return bInAction; } protected set { bInAction = value; } }
-
     // 슬로우 관리를 위한 토큰 (코루틴 대체)
     private CancellationTokenSource slowCts;
+
+    public bool IsDead
+    {
+        get { return healthPoint.SafeInvoke(v => v.Dead); }
+    }
 
     #region ACTION
     public Action OnBeginDoAction;
@@ -38,7 +40,6 @@ public class Character
 
     protected virtual void Awake()
     {
-
         healthPoint = GetComponent<HealthPointComponent>();
         status = GetComponent<StatusComponent>();
         if (status != null && healthPoint != null)
@@ -59,7 +60,7 @@ public class Character
         }
     }
 
-    public virtual void End_Damaged() { bInAction = false; }
+    public virtual void End_Damaged() { }
 
     public void SetGenericTeamId(GenenricTeamId id) { genericTeamId = id; }
     public GenenricTeamId GetGeneriTeamId() { return genericTeamId; }

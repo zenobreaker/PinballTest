@@ -24,10 +24,13 @@ public class ShootComponent : MonoBehaviour
     private void Shoot(BallRuntimeData runtimeData, Vector2 direction)
     {
         if (ballDatabase == null) return; 
+        if (owner.IsDead) return; 
 
         // 데이터베이스에서 타입과 레벨에 맞는 최종 데이터를 가져옴
         BallData data = ballDatabase.GetBallData(runtimeData.BallType, runtimeData.Level);
         if (data == null) return;
+
+        if (launchPoint == null) return; 
 
         // 1. 오브젝트 풀에서 공을 가져옵니다. 
         GameObject ballObj = ObjectPooler.DeferredSpawnFromPool(data.poolName, launchPoint);

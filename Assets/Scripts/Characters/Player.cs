@@ -36,7 +36,10 @@ public class Player
         base.Start();
 
         SetGenericTeamId(1);
+
         BattleManager.Instance.SafeInvoke(v => v.RegistPlayer(this));
+        BallManager.Instance.SafeInvoke(v => v.Init(this));
+        GameManager.Instance.SafeInvoke(v => v.StartStage());
     }
 
     protected override void OnDisable()
@@ -55,7 +58,6 @@ public class Player
 
     public override void End_DoAction()
     {
-        bInAction = false;
         Debug.Log("Player End DoAction");
 
         OnEndDoAction?.Invoke();
