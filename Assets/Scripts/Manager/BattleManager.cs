@@ -109,7 +109,7 @@ public class BattleManager
     }
 
 
-    private Character GetPrioritizedPlayer()
+    public Character GetPrioritizedPlayer()
     {
         return players.FirstOrDefault();
     }

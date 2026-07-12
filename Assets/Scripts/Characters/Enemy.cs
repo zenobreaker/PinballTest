@@ -25,6 +25,8 @@ public class Enemy
     private MonsterGrade grade;
     private CancellationTokenSource damageCTS;
 
+    private bool isAttacking = false; 
+
     protected override void Awake()
     {
         base.Awake();
@@ -58,10 +60,6 @@ public class Enemy
         SetGenericTeamId(2);
     }
 
-    protected void OnEnable()
-    {
-    }
-
     protected override void OnDisable()
     {
         base.OnDisable();
@@ -75,27 +73,34 @@ public class Enemy
         ObjectPooler.ReturnToPool(gameObject);
     }
 
-    public override void Start_DoAction()
+    public void BeginAttack()
     {
-        base.Start_DoAction();
+        if (isAttacking || healthPoint.Dead)
+            return;
+
+        AttackAsync().Forget();
     }
 
-    public override void End_DoAction()
+    private async UniTaskVoid AttackAsync()
     {
-        base.End_DoAction();
-        bInAction = false;
+        isAttacking = true;
 
-        OnEndDoAction?.Invoke();
-    }
+        if (TryGetComponent<MovementComponent>(out var movement))
+            movement.SetMovementRestriction(true);
 
-    public override void Begin_JudgeAttack(AnimationEvent e)
-    {
-        base.Begin_JudgeAttack(e);
-    }
+        await UniTask.Delay(TimeSpan.FromSeconds(2.0f));
 
-    public override void End_JudgeAttack(AnimationEvent e)
-    {
-        base.End_JudgeAttack(e);
+        if (healthPoint.Dead) return;
+
+        var player = BattleManager.Instance.SafeInvoke(v => v.GetPrioritizedPlayer());
+        if (player != null && player.TryGetComponent<IDamagable>(out var damage))
+        {
+            DamageEvent damageEvent = new DamageEvent
+                (status.GetStatusValue(StatusType.ATTACK));
+            damage.OnDamage(this, null, Vector3.zero, damageEvent);
+        }
+
+        Dead(); 
     }
 
     public void OnDamage(GameObject attacker,
@@ -149,11 +154,6 @@ public class Enemy
         }
     }
 
-    public override void End_Damaged()
-    {
-        base.End_Damaged();
-
-    }
 
     public void SetStatData(MonsterInfo info)
     {

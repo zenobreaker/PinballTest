@@ -1,10 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class Player
     : Character
@@ -40,17 +36,14 @@ public class Player
         base.Start();
 
         SetGenericTeamId(1);
-    }
-    protected void OnEnable()
-    {
-
+        BattleManager.Instance.SafeInvoke(v => v.RegistPlayer(this));
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
 
-        BattleManager.Instance?.UnreistPlayer(this);
+        BattleManager.Instance.SafeInvoke(v => v.UnreistPlayer(this));
     }
 
     public override void Begin_DoAction()
@@ -93,20 +86,19 @@ public class Player
     public void OnDamage(GameObject attacker, Weapon causer, Vector3 hitPoint, DamageEvent damageEvent)
     {
 
-        // 이 함수 내부에서 이미 HP를 깎고 state.SetDamagedMode()를 호출합니다!
+        // 이 함수 내부에서 이미 HP를 깎고 state.SetDamagedMode()를 호출
         damageHandle.SafeInvoke(v => v.OnDamage(attacker, damageEvent));
 
-        // 3. 살았는지 죽었는지 판단
+        Debug.Log($"{healthPoint.GetCurrentHP} hp 남음");
+
+        // 살았는지 죽었는지 판단
         if (healthPoint.Dead == false)
         {
             return;
         }
         // --- 여기서부터는 죽었을 때의 처리 ---
 
-        Collider collider = GetComponent<Collider>();
-        if (collider != null) collider.enabled = false;
-
-        // 💡 코루틴 대신 UniTask 호출
+        // 코루틴 대신 UniTask 호출
         HandleDeath().Forget();
     }
 

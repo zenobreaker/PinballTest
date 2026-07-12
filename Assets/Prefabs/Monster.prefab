@@ -339,7 +339,7 @@ MonoBehaviour:
   moveSpeed: 0.1
   obstacleLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   checkDistance: 0.1
 --- !u!114 &8593384607355074372
 MonoBehaviour:
