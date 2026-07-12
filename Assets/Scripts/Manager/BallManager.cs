@@ -25,6 +25,7 @@ public class BallManager : Singleton<BallManager>
 
     private int activeBallCount;
     private int currentBallIndex = 0;
+    private int currentShootIndex = 0;
 
     // 발사 루틴 및 예약 제어용 변수
     private bool isRoutineRunning = false;
@@ -44,7 +45,8 @@ public class BallManager : Singleton<BallManager>
     public void Init(Character player )
     {
         activeBallCount = 0;
-        currentBallIndex = 0; 
+        currentBallIndex = 0;
+        currentShootIndex = 0; 
         isRoutineRunning = false;
         currentAimDirection = Vector2.up; // 초기 방향 90도 고정
 
@@ -62,6 +64,25 @@ public class BallManager : Singleton<BallManager>
         ScheduleNextTurn().Forget();
     }
 
+    public bool GetAvailableBallPool()
+    {
+        bool isAvailable = true;
+
+        int count = 0; 
+        foreach (var ball in currentBalls)
+        {
+            if(ball.Level >= 3 || ball.BallType != BallType.Normal)
+            {
+                count++;
+            }
+        }
+
+        if (count >= 4)
+            isAvailable = false;
+
+        return isAvailable; 
+    }
+
     // 삼택지에서 새로운 볼 획득 또는 업그레이드 시 호출할 함수
 
     public void ReplaceOrUpgradeBall(ActiveSkill ballSkill)
@@ -73,11 +94,31 @@ public class BallManager : Singleton<BallManager>
 
     public void ReplaceOrUpgradeBall(BallType newType, int level)
     {
-        if (currentBallIndex >= 0 && currentBallIndex < currentBalls.Count)
+        int existingIndex = currentBalls.FindIndex(b => b.BallType == newType);
+
+        if (existingIndex != -1)
         {
-            currentBalls[currentBallIndex].BallType = newType;
-            currentBalls[currentBallIndex].Level = level;
-            currentBallIndex++; 
+            // [업그레이드] 이미 존재하면 레벨만 갱신
+            currentBalls[existingIndex].Level = level;
+            Debug.Log($"[BallManager] {newType} 볼 레벨 업: {level}");
+        }
+        else
+        {
+            // [새로운 볼 획득] 비어있는 슬롯(혹은 다음 슬롯)에 추가
+            // 만약 현재 4개 미만이라면 추가하고, 4개라면 기존 로직에 따라 덮어쓰거나 처리
+            if (currentBalls.Count < maxBallCount)
+            {
+                currentBalls.Add(new BallRuntimeData { BallType = newType, Level = level });
+                Debug.Log($"[BallManager] 새로운 볼 {newType} 추가 (Level: {level})");
+            }
+            else
+            {
+                // 이미 4개가 꽉 찼는데 새로운 타입이라면, 기존 정책(예: 인덱스 순차 교체)대로 처리
+                // 여기서는 예시로 첫 번째 슬롯부터 교체하도록 구현했습니다.
+                currentBalls[currentBallIndex % maxBallCount].BallType = newType;
+                currentBalls[currentBallIndex % maxBallCount].Level = level;
+                currentBallIndex++;
+            }
         }
     }
 
@@ -117,9 +158,10 @@ public class BallManager : Singleton<BallManager>
         // 쏠 수 있는 공이 남아있을 때까지 반복 (이 루틴은 처음에 받은 direction을 끝까지 유지함)
         if (activeBallCount < maxBallCount)
         {
-            BallRuntimeData ballToLaunch = currentBalls[activeBallCount];
+            BallRuntimeData ballToLaunch = currentBalls[currentShootIndex];
             OnLaunch?.Invoke(ballToLaunch, direction);
             activeBallCount++;
+            currentShootIndex = (currentShootIndex + 1) % maxBallCount;
         }
 
         // 지정된 발사 간격만큼 대기 후 루틴 종료

@@ -21,6 +21,7 @@ public sealed class StageManager : MonoBehaviour
         None,
         Preparing,
         Battle,
+        Choice,
         Result
     };
 
@@ -34,6 +35,8 @@ public sealed class StageManager : MonoBehaviour
     [Tooltip("에디터에서 생성한 MapGrid 오브젝트를 여기에 드래그 앤 드롭 하세요.")]
     [SerializeField] private Transform spawnPointContainer;
 
+    [SerializeField] private SkillSelectionUI selectionUI;
+
     private StageInfo currentStage;
 
     private SpawnManager spawnManager;
@@ -42,6 +45,7 @@ public sealed class StageManager : MonoBehaviour
     private List<Transform> enemySpawnPoints = new List<Transform>();
 
     private bool bEnableSpawn = false;
+    private bool needSkillChoice = false;
 
     public event Action OnStageStart;
     public event Action OnProcessBattle;
@@ -90,11 +94,15 @@ public sealed class StageManager : MonoBehaviour
     private void OnEnable()
     {
         ObjectPooler.OnPoolInitialized += OnPoolReady;
+        if (ExperienceManager.Instance != null)
+            ExperienceManager.Instance.OnLevelUp += HandleLevelUP;
     }
 
     private void OnDisable()
     {
         ObjectPooler.OnPoolInitialized -= OnPoolReady;
+        if (ExperienceManager.Instance != null)
+            ExperienceManager.Instance.OnLevelUp -= HandleLevelUP;
     }
 
     private void OnPoolReady()
@@ -117,7 +125,7 @@ public sealed class StageManager : MonoBehaviour
         try
         {
             if (currentStage == null)
-                return new StageResult(); 
+                return new StageResult();
 
             stageState = StageState.Preparing;
             int currentWave = 1;
@@ -130,8 +138,10 @@ public sealed class StageManager : MonoBehaviour
 
             Character player = BattleManager.Instance.SafeInvoke(v => v.GetPrioritizedPlayer());
             bool isPlayerDead = false;
-            if(player != null)
+            if (player != null)
                 player.OnDead += (player) => { isPlayerDead = true; };
+
+            needSkillChoice = false;
 
             // 웨이브 루프 시작!
             while (currentWave <= currentStage.wave)
@@ -145,14 +155,31 @@ public sealed class StageManager : MonoBehaviour
                 OnProcessBattle?.Invoke();
 
                 //  전투 끝날 때까지 여기서 무한 대기! (이벤트 체인 불필요)
-                await UniTask.WaitUntil(() =>
-                    spawnManager.ActiveEnemyCount == 0 || isPlayerDead,
-                    cancellationToken: token);
+                while (!isPlayerDead && spawnManager.ActiveEnemyCount > 0)
+                {
+                    if (needSkillChoice)
+                    {
+                        needSkillChoice = false;
+
+                        stageState = StageState.Choice;
+                        
+                        Time.timeScale = 0;
+
+                        await selectionUI.SafeInvoke(v => v.ShowAsync());
+                        
+                        Time.timeScale = 1;
+
+                        stageState = StageState.Battle;
+                    }
+
+                    await UniTask.Yield(PlayerLoopTiming.Update, token);
+                }
 
                 if (isPlayerDead)
                 {
                     break; // 사망 시 즉시 루프 탈출
                 }
+
 
                 currentWave++;
             }
@@ -179,6 +206,11 @@ public sealed class StageManager : MonoBehaviour
         if (stage == null) return;
 
         currentStage = stage;
+    }
+
+    private void HandleLevelUP()
+    {
+        needSkillChoice = true;
     }
 
 }

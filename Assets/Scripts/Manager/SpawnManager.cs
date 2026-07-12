@@ -76,6 +76,8 @@ public sealed class SpawnManager : MonoBehaviour
     {
         enemy.OnDead -= OnEnemyDead;
         spawnedEnemies.Remove(enemy);
+        
+        ExperienceManager.Instance.SafeInvoke(v => v.AddExp(1));
 
         if (spawnedEnemies.Count == 0)
             OnAllEnemiesDead?.Invoke(); 

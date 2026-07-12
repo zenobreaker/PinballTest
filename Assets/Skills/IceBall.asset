@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4ef8d8820d29374c9a8332cf0913e23, type: 3}
+  m_Name: IceBall
+  m_EditorClassIdentifier: Assembly-CSharp::SO_ActiveSkillData
+  id: 1002
+  skillName: "\uC544\uC774\uC2A4\uBCFC"
+  maxLevel: 3
+  skillImage: {fileID: 498749362002363885, guid: 8692d402ae98d9c4ba42c77e97751ed5, type: 3}
+  levelDatas:
+  - skillDescription: "30% \uD655\uB960\uB85C 5\uCD08 \uB0C9\uB3D9. \uC774\uB3D9\uC18D\uB3C4
+      10% \uAC10\uC18C, \uCD94\uAC00 \uD53C\uD574 10% "
+    effectValue: 10
+    effectChance: 0.3
+    effectDuration: 6
+    maxStack: 1
+  - skillDescription: "35% \uD655\uB960\uB85C 6\uCD08 \uB0C9\uB3D9. \uC774\uB3D9\uC18D\uB3C4
+      15% \uAC10\uC18C, \uCD94\uAC00 \uD53C\uD574 15%"
+    effectValue: 15
+    effectChance: 0.35
+    effectDuration: 7
+    maxStack: 1
+  - skillDescription: "40% \uD655\uB960\uB85C 7\uCD08 \uB0C9\uB3D9. \uC774\uB3D9\uC18D\uB3C4
+      20% \uAC10\uC18C, \uCD94\uAC00 \uD53C\uD574 20%"
+    effectValue: 20
+    effectChance: 0.4
+    effectDuration: 7
+    maxStack: 5
+  ballType: 2

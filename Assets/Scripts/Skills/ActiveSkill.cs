@@ -1,13 +1,17 @@
 using UnityEngine;
 
-public abstract class ActiveSkill : Skill
+public class ActiveSkill : Skill
 {
     public BallType BallType;
 
+    public ActiveSkill(SO_ActiveSkillData data)
+        : base (data)
+    {
+        BallType = data.ballType;
+    }
+
     public override void ApplyEffect()
     {
-        base.ApplyEffect();
-
-
+        BallManager.Instance.SafeInvoke(v => v.ReplaceOrUpgradeBall(BallType, skillLevel));
     }
 }

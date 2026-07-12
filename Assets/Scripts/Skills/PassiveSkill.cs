@@ -8,7 +8,7 @@ public class SkillUseEvent
     public GameObject Owner; 
 }
 
-public abstract class PassiveSkill
+public class PassiveSkill
     : Skill
 {
     protected GameObject owner;

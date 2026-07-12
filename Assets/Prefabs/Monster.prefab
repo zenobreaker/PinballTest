@@ -198,6 +198,7 @@ GameObject:
   - component: {fileID: 8400440833246680063}
   - component: {fileID: 8593384607355074372}
   - component: {fileID: 2131369690472761366}
+  - component: {fileID: 8195123382766546441}
   m_Layer: 0
   m_Name: Monster
   m_TagString: Enemy
@@ -339,8 +340,9 @@ MonoBehaviour:
   moveSpeed: 0.1
   obstacleLayer:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 0
   checkDistance: 0.1
+  boxCastWidthMultiplier: 0.8
 --- !u!114 &8593384607355074372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -377,3 +379,15 @@ MonoBehaviour:
     - type: 7
       value:
         baseValue: 100
+--- !u!114 &8195123382766546441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7164153343441057374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb3f4899b94b6354ba8241b9789c803d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffectComponent

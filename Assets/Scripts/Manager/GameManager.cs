@@ -11,7 +11,6 @@ public class GameManager
         NONE,
         BEGIN_STAGE,
         PROCESS_BATTLE,
-        PROCESS_CHOICE,
         FINISH_STAGE,
     };
 
@@ -86,7 +85,7 @@ public class GameManager
 
         SetGameState(GameState.FINISH_STAGE);
 
-        resultPopup.Show(result.IsSuccess);
+        resultPopup.SafeInvoke(v => v.Show(result.IsSuccess));
     }
 
     public void OnPrecessBattle()

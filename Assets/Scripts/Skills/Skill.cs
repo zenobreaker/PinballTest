@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using UnityEngine;
 
 public abstract class Skill
@@ -19,11 +20,13 @@ public abstract class Skill
 
     public Skill()
     {
-
+        skillLevel = 1;
     }
 
     public Skill(int id, string name, string desc, Sprite icon)
     {
+        skillLevel = 1; 
+
         skillID = id;
         skillName = name;
         skillDescription = desc;
@@ -31,8 +34,12 @@ public abstract class Skill
     }
 
     public Skill(SO_SkillData skillData)
-        : this(skillData.id, skillData.skillName, skillData.skillDescription, skillData.skillImage)
+        : this()
     {
+        skillID = skillData.id;
+        skillName = skillData.skillName;
+        Icon = skillData.skillImage;
+
         LevelDatas = skillData.levelDatas;
     }
 
@@ -41,6 +48,13 @@ public abstract class Skill
         skillLevel = level;
     }
 
+    public string GetDesc(int level)
+    {
+        string result = "";
+        if (LevelDatas.Count > 0 && LevelDatas.Count <= level - 1)
+            result = LevelDatas[level - 1].skillDescription;
+        return result;
+    }
     public void LevelUp()
     {
         skillLevel++;

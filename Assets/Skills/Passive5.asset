@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bc02ea2569aa3245a0f97faea1d6c87, type: 3}
+  m_Name: Passive5
+  m_EditorClassIdentifier: Assembly-CSharp::SO_PassiveSkillData
+  id: 3005
+  skillName: "\uB9C8\uC9C0\uB9C9 \uC131\uB0E5"
+  maxLevel: 3
+  skillImage: {fileID: 933059483129848996, guid: 6bdd8bf809557a142a503cf329c19cf1, type: 3}
+  levelDatas:
+  - skillDescription: "\uC801 \uC0AC\uB9DD \uC2DC \uD3ED\uBC1C\uD574 \uADFC\uCC98
+      \uC801\uC5D0\uAC8C 10 \uD53C\uD574\r\n"
+    effectValue: 10
+    effectChance: 0
+    effectDuration: 0
+    maxStack: 0
+  - skillDescription: "\uC801 \uC0AC\uB9DD \uC2DC \uD3ED\uBC1C\uD574 \uADFC\uCC98
+      \uC801\uC5D0\uAC8C 20 \uD53C\uD574"
+    effectValue: 20
+    effectChance: 0
+    effectDuration: 0
+    maxStack: 0
+  - skillDescription: "\uC801 \uC0AC\uB9DD \uC2DC \uD3ED\uBC1C\uD574 \uADFC\uCC98
+      \uC801\uC5D0\uAC8C 30 \uD53C\uD574"
+    effectValue: 30
+    effectChance: 0
+    effectDuration: 0
+    maxStack: 0
+  passiveType: 2

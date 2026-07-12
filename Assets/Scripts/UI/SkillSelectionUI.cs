@@ -1,24 +1,53 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SkillSelectionUI : MonoBehaviour
 {
-    [SerializeField] private List<CardBase> selectionButtons; // 3개 버튼
+    [SerializeField] private List<CardBase> selectionButtons; 
 
     public event Action OnClosePopup;
+    private UniTaskCompletionSource completionSource;
 
-    public void ShowSelectionPopup()
+    // 반환 타입을 void에서 UniTask로 변경
+    public async UniTask ShowAsync()
     {
-        // 1. SkillDatabase에서 무작위 3개 추출 (보유 여부 및 최대 레벨 체크)
-        // 2. 버튼에 스킬 정보(이름, 효과, 레벨) 표시
+        gameObject.SetActive(true);
+        
+
+        // 1. SkillManager에서 무작위 3개 추출
+         List<Skill> randomSkills = SkillManager.Instance.GetRandomAvailableSkills();
+        
+        
+        // 2. 버튼(CardBase)에 스킬 정보(이름, 효과, 레벨) 세팅 및 이벤트 바인딩 (TODO)
+        for (int i = 0; i < randomSkills.Count; i++) 
+        {
+            CardBase sb = selectionButtons[i];
+            sb.Show(randomSkills[i]);
+            sb.OnSelectSkill += OnSelectSkill;
+        }
+
+        // 새로운 CompletionSource를 생성합니다.
+        completionSource = new UniTaskCompletionSource();
+
+        // 유저가 스킬을 선택해서 completionSource.TrySetResult()가 호출될 때까지 여기서 대기합니다.
+        await completionSource.Task;
     }
 
     private void ClosePopup()
     {
         OnClosePopup?.Invoke();
 
-        gameObject.SetActive(false); 
+        foreach (var card in selectionButtons)
+            card.gameObject.SetActive(false); 
+
+        gameObject.SetActive(false);
+        if (completionSource != null)
+        {
+            completionSource.TrySetResult();
+            completionSource = null;
+        }
     }
 
     public void OnSelectSkill(Skill selectedSkill)
@@ -26,4 +55,5 @@ public class SkillSelectionUI : MonoBehaviour
         SkillManager.Instance.SafeInvoke(v => v.AcquireSkill(selectedSkill)); 
         ClosePopup();
     }
+
 }

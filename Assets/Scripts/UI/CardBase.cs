@@ -13,7 +13,7 @@ public class CardBase : MonoBehaviour
 
     private Skill currentSkill;
 
-    public event Action OnSelectSkill;
+    public event Action<Skill> OnSelectSkill;
 
     private void Awake()
     {
@@ -24,7 +24,9 @@ public class CardBase : MonoBehaviour
     public void Show(Skill skill)
     {
         if (skill == null) return;
-        
+
+        gameObject.SetActive(true);
+
         currentSkill = skill; 
 
         if (skillIcon != null)
@@ -34,20 +36,15 @@ public class CardBase : MonoBehaviour
             skillNameText.text = skill.Name;
 
         if (skillDescText != null)
-            skillDescText.text = skill.Description;
+            skillDescText.text = skill.GetDesc(skill.SkillLevel);
 
         if (skillLevelText != null)
-            skillLevelText.text = "Lv. " + skill.SkillLevel.ToString();
+            skillLevelText.text = "Lv. " + (skill.SkillLevel).ToString();
     }
 
 
     private void SelectSkill()
     {
-        if(currentSkill is ActiveSkill ball)
-        {
-            SkillManager.Instance.SafeInvoke(v => v.AcquireSkill(currentSkill));
-            
-            OnSelectSkill?.Invoke(); 
-        }
+        OnSelectSkill?.Invoke(currentSkill);
     }
 }
