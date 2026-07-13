@@ -1,14 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-// 1. 웨이브 데이터 SO
-[CreateAssetMenu(fileName = "NewWaveData", menuName = "Scriptable Objects/WaveData")]
-public class SO_WaveData : ScriptableObject
-{
-    public int waveIndex;
-    public List<SpawnData> spawns = new List<SpawnData>();
-}
-
 // 2. 스테이지 정보 SO
 [CreateAssetMenu(fileName = "NewStageInfo", menuName = "Scriptable Objects/StageInfo")]
 public class SO_StageInfo : ScriptableObject

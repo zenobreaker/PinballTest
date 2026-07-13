@@ -9,40 +9,44 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: a7178c03fae2cde44874fad7d7098ce7, type: 3}
   m_Name: Wave_12
   m_EditorClassIdentifier: Assembly-CSharp::SO_WaveData
   waveIndex: 12
   spawns:
   - monsterId: 1001
-    spawnPointIndex: 9
+    spawnPointIndex: 20
+  - monsterId: 1001
+    spawnPointIndex: 33
+  - monsterId: 1001
+    spawnPointIndex: 46
+  - monsterId: 1001
+    spawnPointIndex: 59
+  - monsterId: 1001
+    spawnPointIndex: 72
   - monsterId: 1001
     spawnPointIndex: 85
   - monsterId: 1001
     spawnPointIndex: 99
   - monsterId: 1001
-    spawnPointIndex: 72
+    spawnPointIndex: 98
   - monsterId: 1001
-    spawnPointIndex: 21
+    spawnPointIndex: 12
   - monsterId: 1001
-    spawnPointIndex: 59
-  - monsterId: 1001
-    spawnPointIndex: 46
-  - monsterId: 1001
-    spawnPointIndex: 113
-  - monsterId: 1001
-    spawnPointIndex: 33
-  - monsterId: 1001
-    spawnPointIndex: 101
-  - monsterId: 1001
-    spawnPointIndex: 23
+    spawnPointIndex: 24
   - monsterId: 1001
     spawnPointIndex: 37
-  - monsterId: 1001
-    spawnPointIndex: 63
   - monsterId: 1001
     spawnPointIndex: 50
   - monsterId: 1001
     spawnPointIndex: 89
   - monsterId: 1001
+    spawnPointIndex: 102
+  - monsterId: 1001
+    spawnPointIndex: 116
+  - monsterId: 1001
     spawnPointIndex: 76
+  - monsterId: 1001
+    spawnPointIndex: 61
+  - monsterId: 1001
+    spawnPointIndex: 21

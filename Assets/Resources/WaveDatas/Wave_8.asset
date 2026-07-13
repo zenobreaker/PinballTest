@@ -9,26 +9,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: a7178c03fae2cde44874fad7d7098ce7, type: 3}
   m_Name: Wave_8
   m_EditorClassIdentifier: Assembly-CSharp::SO_WaveData
   waveIndex: 8
   spawns:
   - monsterId: 1001
-    spawnPointIndex: 97
+    spawnPointIndex: 10
   - monsterId: 1001
-    spawnPointIndex: 96
+    spawnPointIndex: 23
+  - monsterId: 1001
+    spawnPointIndex: 36
   - monsterId: 1001
     spawnPointIndex: 49
   - monsterId: 1001
-    spawnPointIndex: 62
+    spawnPointIndex: 72
+  - monsterId: 1001
+    spawnPointIndex: 85
+  - monsterId: 1001
+    spawnPointIndex: 111
   - monsterId: 1001
     spawnPointIndex: 98
-  - monsterId: 1001
-    spawnPointIndex: 20
-  - monsterId: 1001
-    spawnPointIndex: 18
-  - monsterId: 1001
-    spawnPointIndex: 19
-  - monsterId: 1001
-    spawnPointIndex: 75
