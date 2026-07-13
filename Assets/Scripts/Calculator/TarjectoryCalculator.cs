@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// MonoBehaviour 상속을 제거하고 static 클래스로 변경합니다.
 public static class TrajectoryCalculator
 {
     /// <summary>
@@ -28,9 +27,6 @@ public static class TrajectoryCalculator
                 // 반사각 계산
                 currentDir = Vector2.Reflect(currentDir, hit.normal);
                 currentStartPos = hit.point;
-
-                // 몬스터에 닿으면 관통하지 않도록 루프 종료
-               // if (hit.collider.CompareTag("Enemy")) break;
             }
             else
             {

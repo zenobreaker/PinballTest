@@ -54,7 +54,10 @@ public sealed class SpawnManager : MonoBehaviour
                     spawnedEnemies.Add(enemy);
                     enemy.OnDead += OnEnemyDead; // 적 사망 이벤트 구독
                     if (BattleManager.Instance != null)
+                    {
+                        enemy.OnKilled -= BattleManager.Instance.NotifyEnemyDie;
                         enemy.OnKilled += BattleManager.Instance.NotifyEnemyDie;
+                    }
 
                     enemy.SetStatData(monsterDatabase.GetMonsterData(spawnData.monsterId));
                 }

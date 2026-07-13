@@ -134,8 +134,6 @@ public class StatusComponent : MonoBehaviour
     
     
     public Action<float> OnSetHealth;
-    public TargetFilterType FilterType { get; private set; }
-
     private HealthPointComponent healthPointComponent;
 
     private void Awake()
