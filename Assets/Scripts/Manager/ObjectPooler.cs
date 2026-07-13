@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Unity.Mathematics;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -106,6 +108,11 @@ public partial class ObjectPooler : MonoBehaviour
     {
         Instance._SpawnWithCallback(tag, tr.position, tr.rotation, callback, false);
     }
+    public static void DeferredSpawnWithCallback(string tag, Vector3 pos, Action<GameObject> callback) 
+    {
+        Instance._SpawnWithCallback(tag, pos, Quaternion.identity, callback, true);
+    }
+
 
     public static void DeferredSpawnWithCallback(string tag, Transform tr, Action<GameObject> callback)
     {

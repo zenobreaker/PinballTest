@@ -12,7 +12,7 @@ public class GhostBall : Ball
             Vector2 hitpoint = collision.GetContact(0).point;
 
             // 데미지 처리 (기본 Ball 클래스의 함수 활용)
-            DealDamage(collision.gameObject, hitpoint, collision);
+            DealDamage(collision.gameObject, collision.gameObject.transform.position, collision);
 
             rb.linearVelocity = lastVelocity.normalized * currentSpeed;
 

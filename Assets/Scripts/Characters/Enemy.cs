@@ -103,7 +103,7 @@ public class Enemy
     }
 
     public void OnDamage(GameObject attacker,
-        Weapon causer, Vector3 hitPoint, DamageEvent damageEvent)
+        Ball causer, Vector3 hitPoint, DamageEvent damageEvent)
     {
         if (healthPoint != null && healthPoint.Dead)
             return;
@@ -118,7 +118,8 @@ public class Enemy
 
         if (healthPoint.Dead == false)
             return;
-
+        
+        OnKilled?.Invoke(this);
         HandleDeath().Forget();
     }
 

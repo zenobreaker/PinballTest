@@ -85,7 +85,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 6460537984911393379, guid: 133c9f0b897d283479f18709a27aed9e, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.34117648}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -171,3 +171,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LaserBall
   returnPolicy: 0
   laserEffectTag: LaserEffect
+  laserMargin: 5

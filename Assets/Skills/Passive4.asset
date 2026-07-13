@@ -35,4 +35,4 @@ MonoBehaviour:
     effectChance: 0
     effectDuration: 0
     maxStack: 0
-  passiveType: 2
+  passiveType: 3

@@ -5,13 +5,8 @@ using UnityEngine;
 public class Player
     : Character
     , IDamagable
-    , IWeaponUser
 {
-
     private DamageHandleComponent damageHandle;
-
-    private WeaponController weaponController;
-
 
     private int jobID;
     public int JobID
@@ -23,8 +18,6 @@ public class Player
     protected override void Awake()
     {
         base.Awake();
-
-        weaponController = GetComponentInChildren<WeaponController>();
 
         damageHandle = GetComponent<DamageHandleComponent>();
     }
@@ -83,9 +76,7 @@ public class Player
         base.Play_CameraShake();
     }
 
-    public WeaponController GetWeaponController() => weaponController;
-
-    public void OnDamage(GameObject attacker, Weapon causer, Vector3 hitPoint, DamageEvent damageEvent)
+    public void OnDamage(GameObject attacker, Ball causer, Vector3 hitPoint, DamageEvent damageEvent)
     {
 
         // 이 함수 내부에서 이미 HP를 깎고 state.SetDamagedMode()를 호출

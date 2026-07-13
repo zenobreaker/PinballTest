@@ -30,6 +30,8 @@ public sealed class StageManager : MonoBehaviour
     [Header("스테이지 데이터 설정")]
     [Tooltip("에디터에서 만든 SO_StageInfo를 넣어주세요.")]
     [SerializeField] private SO_StageInfo soStageInfo;
+    [SerializeField] private WaveGroup waveGroup;
+
 
     [Header("스폰 설정")]
     [Tooltip("에디터에서 생성한 MapGrid 오브젝트를 여기에 드래그 앤 드롭 하세요.")]
@@ -146,6 +148,8 @@ public sealed class StageManager : MonoBehaviour
             while (currentWave <= currentStage.wave)
             {
                 Debug.Log($"현재 웨이브 : {currentWave} ");
+                waveGroup.SafeInvoke(v => v.DrawText(currentWave));
+
                 // 적 스폰 대기
                 await spawnManager.SpawnEnemiesAsync(currentStage.waves[currentWave - 1],
                     enemySpawnPoints, token);

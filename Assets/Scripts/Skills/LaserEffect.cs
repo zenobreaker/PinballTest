@@ -1,6 +1,7 @@
-using UnityEngine;
 using Cysharp.Threading.Tasks;
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class LaserEffect : MonoBehaviour
 {
@@ -8,14 +9,36 @@ public class LaserEffect : MonoBehaviour
     [SerializeField] private Vector2 boxSize = new Vector2(20f, 1f); // 가로로 긴 타격 박스 크기
     [SerializeField] private LayerMask enemyLayer;
 
+
+    // 현재 화면에 켜져 있는 모든 레이저를 관리하는 리스트
+    private static List<LaserEffect> activeLasers = new List<LaserEffect>();
+
+    // Y축으로 위아래 5씩, 총합 10의 마진 안에 다른 레이저가 있는지 검사
+    public static bool IsLaserActiveNear(float targetY, float margin = 5f)
+    {
+        foreach (var laser in activeLasers)
+        {
+            // 켜져 있는 레이저와 새 타겟의 Y축 거리 차이 계산
+            if (Mathf.Abs(laser.transform.position.y - targetY) <= margin)
+            {
+                return true; // 마진 안에 이미 레이저가 있음!
+            }
+        }
+        return false;
+    }
+
+
     private void OnDisable()
     {
+        activeLasers.Remove(this);
         ObjectPooler.ReturnToPool(gameObject);
     }
 
     public void FireLaser(DamageEvent damage, Character owner)
     {
-        // 1. 타격 판정 (BoxCast를 양쪽으로 넓게 펼쳐서 스캔)
+        activeLasers.Add(this);
+
+        // 타격 판정 (BoxCast를 양쪽으로 넓게 펼쳐서 스캔)
         Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, boxSize, 0f, enemyLayer);
 
         foreach (var hit in hits)

@@ -26,6 +26,10 @@ public class SkillManager : Singleton<SkillManager>
                 passiveSkills.Add(passive); 
         }
     }
+    public void InitSkill()
+    {
+        ownedSkills.Clear(); 
+    }
 
     public void AcquireSkill(Skill skill)
     {
@@ -42,8 +46,8 @@ public class SkillManager : Singleton<SkillManager>
             skill.SetLevel(1);
         }
         skill.ApplyEffect();
-
     }
+
     public SkillLevelData GetSkillDataByBallType(BallType ballType)
     {
         // Normal 타입은 특수 스킬이 없으므로 null 반환

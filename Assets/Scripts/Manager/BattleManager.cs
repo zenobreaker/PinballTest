@@ -123,6 +123,7 @@ public class BattleManager
 
     public void NotifyEnemyDie(Character enemy)
     {
+        ExperienceManager.Instance.SafeInvoke(v => v.AddExp(1));
         OnEnemyDied?.Invoke(enemy);
     }
 

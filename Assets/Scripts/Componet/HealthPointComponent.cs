@@ -13,6 +13,7 @@ public class HealthPointComponent : MonoBehaviour
     [SerializeField] private string uiEnemyName = "EnemyHealthbar";
     [SerializeField] private float speed = 2.0f;
     [SerializeField] private float hideTime = 3.0f;
+    [SerializeField] private HpGauge hp;
 
 
     private Image hpGauge;
@@ -97,12 +98,20 @@ public class HealthPointComponent : MonoBehaviour
                 }
             }
         }
+
+        if (hp != null)
+        {
+            hp.DrawHP(currentHealthPoint, maxHealthPoint);
+        }
     }
 
     public void InitCurrentHealth()
     {
         currentHealthPoint = maxHealthPoint;
-
+        if (hp != null)
+        {
+            hp.DrawHP(currentHealthPoint, maxHealthPoint);
+        }
         //if (GetComponent<Player>() != null)
         //{
         //    handler.SafeInvoke(v => v.OnInitValue_HP(currentHealthPoint));
@@ -141,7 +150,6 @@ public class HealthPointComponent : MonoBehaviour
             hpGauge.fillAmount = currentHealthPoint / maxHealthPoint;
             uiEnemyCanvas.SafeInvoke(v => v.gameObject.SetActive(true));
         }
-
 
         if (healthText != null)
         {

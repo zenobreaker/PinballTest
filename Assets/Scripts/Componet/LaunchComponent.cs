@@ -15,7 +15,7 @@ public class LaunchComponent : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
     }
 
-    public void ApplyLaunch(GameObject attacker, Weapon causer, HitData hitData)
+    public void ApplyLaunch(GameObject attacker, Ball causer, HitData hitData)
     {
         if (rigid == null || hitData == null || attacker == null) return;
 

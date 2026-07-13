@@ -71,6 +71,8 @@ public class GameManager
             stageManager.InitializeStageData();
             stageManager.InitializeSpawnPoints();
 
+            SkillManager.Instance.SafeInvoke(v => v.InitSkill());
+
             RunStageAsync().Forget();
         }
     }

@@ -82,8 +82,8 @@ public class Ball : MonoBehaviour
             Debug.Log("적 충돌! 데미지 처리");
 
             // 데미지 처리 로직 연결
-            Vector2 hitpoint = myCollider.SafeInvoke(v => v.ClosestPoint(collision.gameObject.transform.position));
-            DealDamage(collision.gameObject, hitpoint, collision);
+            //Vector2 hitpoint = myCollider.SafeInvoke(v => v.ClosestPoint(collision.gameObject.transform.position));
+            DealDamage(collision.gameObject, this.transform.position, collision);
 
             // 자식 클래스(파이어볼 등)의 특수 효과 발동을 위한 가상 함수 호출
             ApplySpecialEffect(collision.gameObject);
@@ -249,7 +249,7 @@ public class Ball : MonoBehaviour
 
             currentHitEvent.DamageAmp = currentFlightDamageAmp;
 
-            damage?.OnDamage(owner, null, hitPoint, currentHitEvent);
+            damage?.OnDamage(owner, this, hitPoint, currentHitEvent);
 
         }
     }

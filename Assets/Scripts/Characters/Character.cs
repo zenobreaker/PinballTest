@@ -29,6 +29,7 @@ public class Character
     public Action OnBeginDoAction;
     public Action OnEndDoAction;
     public Action<Character> OnDead;
+    public Action<Character> OnKilled;
     #endregion
 
     private int charID;

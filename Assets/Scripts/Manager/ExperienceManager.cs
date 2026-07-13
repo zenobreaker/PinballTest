@@ -48,6 +48,6 @@ public class ExperienceManager : Singleton<ExperienceManager>
 
     private int GetNeedExp(int level)
     {
-        return level * 2;
+        return (int)Mathf.Round(level * 1.5f);
     }
 }
