@@ -76,8 +76,10 @@ public class Player
         base.Play_CameraShake();
     }
 
+    private bool isDying = false;
     public void OnDamage(GameObject attacker, Ball causer, Vector3 hitPoint, DamageEvent damageEvent)
     {
+        if (isDying) return;
 
         // 이 함수 내부에서 이미 HP를 깎고 state.SetDamagedMode()를 호출
         damageHandle.SafeInvoke(v => v.OnDamage(attacker, damageEvent));
@@ -89,17 +91,15 @@ public class Player
         {
             return;
         }
-        // --- 여기서부터는 죽었을 때의 처리 ---
 
         // 코루틴 대신 UniTask 호출
         HandleDeath().Forget();
     }
 
-    // 💡 IEnumerator -> async UniTaskVoid 로 변경
     private async UniTaskVoid HandleDeath()
     {
         // 1초 대기 (토큰이 없으므로 씬 전환 시 에러 안 나게 주의)
-        await UniTask.Delay(TimeSpan.FromSeconds(1.0f));
+        await UniTask.Delay(TimeSpan.FromSeconds(1.0f), cancellationToken: this.GetCancellationTokenOnDestroy());
         Dead();
     }
 

@@ -54,6 +54,7 @@ public class GameManager
     protected override void SyncDataFromSingleton()
     {
         base.SyncDataFromSingleton();
+        Instance.resultPopup = resultPopup;
     }
 
     protected void Update()

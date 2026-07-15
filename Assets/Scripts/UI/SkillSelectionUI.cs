@@ -6,13 +6,35 @@ using UnityEngine;
 public class SkillSelectionUI : MonoBehaviour
 {
     [SerializeField] private List<CardBase> selectionButtons;
+    [SerializeField] private CanvasGroup cg;
 
     public event Action OnClosePopup;
     private UniTaskCompletionSource completionSource;
 
+    private void Awake()
+    {
+        if(cg != null && GameManager.Instance != null)
+        {
+            StageManager sm = GameManager.Instance.StageManager; 
+
+            if(sm != null)
+            {
+                sm.SetSkillSelectionUI(this);
+                gameObject.SetActive(false); 
+            }
+        }
+    }
+
     // 반환 타입을 void에서 UniTask로 변경
     public async UniTask ShowAsync()
     {
+        if (cg != null)
+        {
+            cg.alpha = 1;
+            cg.blocksRaycasts = true;
+            cg.interactable = true;
+        }
+
         // 1. SkillManager에서 무작위 3개 추출
         List<Skill> randomSkills = SkillManager.Instance.GetRandomAvailableSkills();
 

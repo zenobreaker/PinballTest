@@ -15,6 +15,11 @@ public sealed class SpawnManager : MonoBehaviour
     // 💡 StageManager가 대기할 때 사용할 프로퍼티 추가
     public int ActiveEnemyCount => spawnedEnemies.Count;
 
+    public void ClearEnemies()
+    {
+        spawnedEnemies.Clear();
+    }
+
 
     // 💡 풀러 콜백을 기다려주는 진짜 비동기 NPC 스폰 함수!
     public async UniTask SpawnEnemiesAsync(WaveData waveData, List<Transform> spawnPoints, CancellationToken token)

@@ -15,14 +15,17 @@ public class ResultPopup : MonoBehaviour
             restartButton.onClick.AddListener(OnClickRestart);
         }
     }
+
     public void Show(bool isClear)
     {
         if (titleText != null)
             titleText.text = isClear ? "Suceess" : "Fail";
+        Time.timeScale = 0;
         gameObject.SetActive(true); 
     }
     private void OnClickRestart()
     {
+        Time.timeScale = 1;
         // 1. ÆË¾÷ UI ²ô±â
         gameObject.SetActive(false);
 

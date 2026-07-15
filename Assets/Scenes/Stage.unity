@@ -801,7 +801,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62b578cf450460d4093a8873ecaa7227, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthPointComponent
-  maxHealthPoint: 10
+  maxHealthPoint: 20
   uiEnemyName: EnemyHealthbar
   speed: 2
   hideTime: 3
@@ -1804,10 +1804,10 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1751177046}
+  - {fileID: 489003561}
   - {fileID: 200662954}
   - {fileID: 1948775755}
   - {fileID: 211277036}
-  - {fileID: 489003561}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1884,13 +1884,14 @@ GameObject:
   - component: {fileID: 211277039}
   - component: {fileID: 211277038}
   - component: {fileID: 211277037}
+  - component: {fileID: 211277040}
   m_Layer: 5
   m_Name: SelectionPopup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &211277036
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1927,6 +1928,7 @@ MonoBehaviour:
   - {fileID: 1032160885}
   - {fileID: 914675200}
   - {fileID: 1942425513}
+  cg: {fileID: 211277040}
 --- !u!114 &211277038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1965,6 +1967,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 211277035}
   m_CullTransparentMesh: 1
+--- !u!225 &211277040
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 211277035}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!4 &211759157 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 632673873145958816, guid: 9b74dd4e287369041a409fa363039e38, type: 3}

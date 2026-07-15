@@ -56,6 +56,17 @@ public sealed class StageManager : MonoBehaviour
         spawnManager = GetComponent<SpawnManager>();
     }
 
+
+    public void SetWaveGroup(WaveGroup waveGroup)
+    {
+        this.waveGroup = waveGroup;
+    }
+
+    public void SetSkillSelectionUI(SkillSelectionUI ui)
+    {
+        selectionUI = ui; 
+    }
+
     public void InitializeStageData()
     {
         if (soStageInfo != null)
@@ -143,7 +154,7 @@ public sealed class StageManager : MonoBehaviour
                 player.OnDead += (player) => { isPlayerDead = true; };
 
             needSkillChoice = false;
-
+            spawnManager.ClearEnemies(); 
             // 웨이브 루프 시작!
             while (currentWave <= currentStage.wave)
             {

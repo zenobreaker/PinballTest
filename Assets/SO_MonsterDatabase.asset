@@ -16,8 +16,8 @@ MonoBehaviour:
   - id: 1001
     monsterName: Fluffy
     poolName: Fluffy
-    hp: 100
+    hp: 20
     attack: 2
     defense: 0
-    speed: 0.2
+    speed: 0.5
     tileScale: {x: 1, y: 1}

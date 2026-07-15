@@ -62,6 +62,8 @@ public class Enemy
     protected override void OnDisable()
     {
         base.OnDisable();
+        
+        isAttacking = false; 
 
         damageCTS?.Cancel();
         damageCTS?.Dispose();
